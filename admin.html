@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Quản trị — Style by BaoAnh Closet</title>
+<link rel="icon" href="images/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Great+Vibes&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin">
+
+<header class="admin-bar">
+  <a class="logo admin-logo" href="index.html" title="Xem website">
+    <span class="logo-row"><span class="script">Style</span><span class="name">BaoAnh</span></span>
+  </a>
+  <span class="admin-tag">Quản trị</span>
+  <div class="admin-user" id="admin-user" hidden>
+    <span id="admin-email"></span>
+    <button class="link-btn" id="admin-signout">Đăng xuất</button>
+  </div>
+</header>
+
+<!-- ===== Gates ===== -->
+<main class="admin-gate" id="gate">
+  <div class="auth-card">
+    <section id="gate-config" hidden>
+      <h1 class="auth-title">Chưa kết nối Firebase</h1>
+      <p class="muted">Dán cấu hình Firebase vào <code>js/firebase-config.js</code>, thêm email của bạn vào <code>ADMIN_EMAILS</code> ở file đó và trong <code>firestore.rules</code>.</p>
+    </section>
+
+    <section id="gate-login" hidden>
+      <h1 class="auth-title">Đăng nhập quản trị</h1>
+      <form id="admin-login" novalidate>
+        <div class="field"><label for="ad-email">Email</label><input id="ad-email" type="email" autocomplete="username" required></div>
+        <div class="field"><label for="ad-pw">Mật khẩu</label><input id="ad-pw" type="password" autocomplete="current-password" required></div>
+        <p class="form-error" role="alert"></p>
+        <button class="btn btn-primary btn-block" type="submit">Đăng nhập</button>
+      </form>
+      <p class="auth-switch"><a href="account.html#forgot">Quên mật khẩu?</a></p>
+    </section>
+
+    <section id="gate-verify" hidden>
+      <h1 class="auth-title">Xác minh email</h1>
+      <p class="muted">Để bảo vệ dữ liệu shop, tài khoản quản trị phải xác minh email trước.</p>
+      <p class="form-ok" id="verify-msg" hidden></p>
+      <div class="acc-actions">
+        <button class="btn btn-primary btn-block" id="btn-send-verify">Gửi email xác minh</button>
+        <button class="btn btn-outline btn-block" id="btn-verified">Tôi đã bấm link xác minh</button>
+      </div>
+    </section>
+
+    <section id="gate-denied" hidden>
+      <h1 class="auth-title">Không có quyền</h1>
+      <p class="muted" id="denied-msg">Tài khoản này không phải tài khoản quản trị.</p>
+      <div class="acc-actions"><button class="btn btn-outline btn-block" id="btn-denied-out">Đăng nhập tài khoản khác</button></div>
+    </section>
+  </div>
+</main>
+
+<!-- ===== App ===== -->
+<div class="admin-app" id="app" hidden>
+  <nav class="admin-tabs" aria-label="Quản trị">
+    <button data-tab="overview" aria-current="page">Tổng quan</button>
+    <button data-tab="customers">Khách hàng & đơn <span class="tab-badge" id="badge-new" hidden></span></button>
+    <button data-tab="inventory">Kho hàng <span class="tab-badge warn" id="badge-low" hidden></span></button>
+    <button data-tab="ledger">Vốn & chi phí</button>
+  </nav>
+
+  <!-- Overview -->
+  <section class="admin-panel" id="tab-overview">
+    <h1 class="admin-h1">Tổng quan</h1>
+    <div class="kpis" id="kpis"></div>
+    <p class="admin-note">Doanh thu tính từ các đơn <b>Đã xác nhận / Đang giao / Hoàn tất</b>. Lãi ước tính = Doanh thu + Thu khác − Giá vốn hàng đã bán − Chi phí (không tính tiền nhập hàng, vì đã nằm trong giá vốn).</p>
+    <div class="admin-grid-2">
+      <div class="admin-box">
+        <h2 class="admin-h2">Đơn mới chờ xử lý</h2>
+        <div id="ov-new"></div>
+      </div>
+      <div class="admin-box">
+        <h2 class="admin-h2">Sắp hết hàng</h2>
+        <div id="ov-low"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Customers & orders -->
+  <section class="admin-panel" id="tab-customers" hidden>
+    <h1 class="admin-h1">Khách hàng & đơn hàng</h1>
+    <div class="toolbar">
+      <div class="seg" role="group" aria-label="Xem theo">
+        <button data-view="orders" aria-pressed="true">Đơn hàng</button>
+        <button data-view="customers" aria-pressed="false">Khách hàng</button>
+      </div>
+      <label class="sr-only" for="search">Tìm kiếm</label>
+      <input id="search" class="admin-input grow" type="search" placeholder="Tìm tên, số điện thoại, email, mã đơn…">
+      <label class="sr-only" for="status-filter">Trạng thái</label>
+      <select id="status-filter" class="admin-input">
+        <option value="">Tất cả trạng thái</option>
+        <option value="new">Mới</option>
+        <option value="confirmed">Đã xác nhận</option>
+        <option value="shipping">Đang giao</option>
+        <option value="done">Hoàn tất</option>
+        <option value="cancelled">Đã hủy</option>
+      </select>
+    </div>
+    <div id="customer-focus"></div>
+    <div id="orders-view"></div>
+    <div id="customers-view" hidden></div>
+  </section>
+
+  <!-- Inventory -->
+  <section class="admin-panel" id="tab-inventory" hidden>
+    <div class="panel-head">
+      <h1 class="admin-h1">Kho hàng</h1>
+      <button class="btn btn-primary" id="btn-add-item">+ Thêm hàng vào kho</button>
+    </div>
+    <p class="admin-note">Khi bạn chuyển một đơn sang <b>Đã xác nhận</b>, kho tự trừ theo đúng mẫu, màu và size. Hủy đơn thì kho tự cộng lại.</p>
+    <div class="table-wrap"><table class="admin-table" id="inv-table"></table></div>
+  </section>
+
+  <!-- Ledger -->
+  <section class="admin-panel" id="tab-ledger" hidden>
+    <h1 class="admin-h1">Vốn & chi phí</h1>
+    <div class="kpis small" id="ledger-kpis"></div>
+    <form class="admin-box ledger-form" id="ledger-form">
+      <h2 class="admin-h2">Ghi một khoản</h2>
+      <div class="form-grid">
+        <div class="field"><label for="lg-date">Ngày</label><input id="lg-date" class="admin-input" type="date" required></div>
+        <div class="field"><label for="lg-kind">Loại</label>
+          <select id="lg-kind" class="admin-input">
+            <option value="expense">Chi phí</option>
+            <option value="capital">Góp vốn</option>
+            <option value="withdraw">Rút vốn</option>
+            <option value="income">Thu khác</option>
+          </select>
+        </div>
+        <div class="field"><label for="lg-cat">Danh mục</label>
+          <input id="lg-cat" class="admin-input" list="lg-cats" placeholder="vd: Quảng cáo">
+          <datalist id="lg-cats">
+            <option value="Nhập hàng"></option><option value="Phí ship"></option><option value="Quảng cáo"></option>
+            <option value="Mặt bằng"></option><option value="Lương"></option><option value="Bao bì"></option>
+            <option value="Live stream"></option><option value="Khác"></option>
+          </datalist>
+        </div>
+        <div class="field"><label for="lg-amount">Số tiền (USD)</label><input id="lg-amount" class="admin-input" type="number" min="0" step="0.01" required></div>
+        <div class="field span-2"><label for="lg-note">Ghi chú</label><input id="lg-note" class="admin-input"></div>
+      </div>
+      <p class="form-error" role="alert"></p>
+      <button class="btn btn-primary" type="submit">Lưu</button>
+    </form>
+    <div class="toolbar">
+      <label for="lg-month">Tháng</label>
+      <input id="lg-month" class="admin-input" type="month">
+      <button class="link-btn" id="lg-all">Xem tất cả</button>
+    </div>
+    <div class="table-wrap"><table class="admin-table" id="ledger-table"></table></div>
+  </section>
+</div>
+
+<!-- Dialog: add / edit inventory item -->
+<dialog id="dlg-item" class="admin-dialog">
+  <form id="item-form" method="dialog">
+    <h2 class="admin-h2" id="item-title">Thêm hàng vào kho</h2>
+    <div class="form-grid">
+      <div class="field span-2"><label for="it-product">Sản phẩm</label><select id="it-product" class="admin-input"></select></div>
+      <div class="field span-2" id="it-name-wrap" hidden><label for="it-name">Tên sản phẩm</label><input id="it-name" class="admin-input"></div>
+      <div class="field"><label for="it-color">Màu</label><input id="it-color" class="admin-input" list="it-colors" placeholder="vd: Đen"><datalist id="it-colors"></datalist></div>
+      <div class="field"><label for="it-size">Size</label><input id="it-size" class="admin-input" list="it-sizes" placeholder="vd: M"><datalist id="it-sizes"><option value="S"></option><option value="M"></option><option value="L"></option><option value="XL"></option><option value="XXL"></option><option value="Free size"></option></datalist></div>
+      <div class="field"><label for="it-qty">Số lượng</label><input id="it-qty" class="admin-input" type="number" min="0" step="1" value="0"></div>
+      <div class="field"><label for="it-low">Báo khi còn ≤</label><input id="it-low" class="admin-input" type="number" min="0" step="1" value="2"></div>
+      <div class="field"><label for="it-cost">Giá vốn / cái (USD)</label><input id="it-cost" class="admin-input" type="number" min="0" step="0.01"></div>
+      <div class="field"><label for="it-price">Giá bán (USD)</label><input id="it-price" class="admin-input" type="number" min="0" step="0.01"></div>
+      <label class="check span-2" id="it-ledger-wrap"><input type="checkbox" id="it-ledger" checked> Ghi tiền nhập hàng (số lượng × giá vốn) vào sổ chi phí</label>
+    </div>
+    <p class="form-error" role="alert"></p>
+    <div class="dialog-actions">
+      <button class="btn btn-outline" value="cancel" formnovalidate>Hủy</button>
+      <button class="btn btn-primary" id="item-save" value="save">Lưu</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Dialog: restock / adjust -->
+<dialog id="dlg-stock" class="admin-dialog">
+  <form id="stock-form" method="dialog">
+    <h2 class="admin-h2" id="stock-title">Nhập thêm hàng</h2>
+    <p class="muted" id="stock-sub"></p>
+    <div class="form-grid">
+      <div class="field"><label for="st-mode">Thao tác</label>
+        <select id="st-mode" class="admin-input">
+          <option value="in">Nhập thêm</option>
+          <option value="out">Xuất / hư hỏng / tặng</option>
+          <option value="set">Kiểm kho (đặt lại số lượng)</option>
+        </select>
+      </div>
+      <div class="field"><label for="st-qty">Số lượng</label><input id="st-qty" class="admin-input" type="number" min="0" step="1" value="1"></div>
+      <div class="field" id="st-cost-wrap"><label for="st-cost">Giá vốn / cái (USD)</label><input id="st-cost" class="admin-input" type="number" min="0" step="0.01"></div>
+      <label class="check span-2" id="st-ledger-wrap"><input type="checkbox" id="st-ledger" checked> Ghi tiền nhập vào sổ chi phí</label>
+    </div>
+    <p class="form-error" role="alert"></p>
+    <div class="dialog-actions">
+      <button class="btn btn-outline" value="cancel" formnovalidate>Hủy</button>
+      <button class="btn btn-primary" id="stock-save" value="save">Lưu</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="js/main.js"></script>
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>

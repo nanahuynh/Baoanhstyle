@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chi tiết sản phẩm — Style by BaoAnh Closet</title>
+<link rel="icon" href="images/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Great+Vibes&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner simple">
+    <a class="back-link" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      <span class="label" data-i18n="home">Trang chủ</span>
+    </a>
+    <a class="logo" href="index.html">
+      <span class="logo-row">
+        <span class="script">Style</span>
+        <span class="by">by</span>
+        <span class="name">BaoAnh</span>
+      </span>
+      <span class="closet">CLOSET</span>
+    </a>
+    <div class="header-actions">
+      <div class="lang-switch" role="group" aria-label="Ngôn ngữ / Language">
+        <button data-lang="vi" aria-pressed="true">VI</button>
+        <button data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <a class="icon-btn" href="account.html" data-account-link aria-label="Tài khoản / Account">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
+      </a>
+      <a class="icon-btn" href="cart.html" aria-label="Giỏ hàng / Bag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <span class="count" data-count="bag">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="index.html" data-i18n="home">Trang chủ</a> /
+    <a href="index.html#shop" data-i18n="dresses">Đầm</a> /
+    <span aria-current="page" id="crumb-name"></span>
+  </nav>
+
+  <div class="pdp">
+    <div class="gallery">
+      <div class="thumbs" id="thumbs"></div>
+      <div class="main-image">
+        <img id="main-img" src="" alt="">
+        <span class="badge" id="main-badge"></span>
+      </div>
+    </div>
+
+    <div class="pdp-info">
+      <div>
+        <h1 id="p-name"></h1>
+        <div class="muted" id="p-sub"></div>
+        <span class="price" id="p-price"></span>
+      </div>
+      <p class="desc" data-i18n="desc">[Mô tả sản phẩm: chất liệu, form dáng, dịp mặc.]</p>
+
+      <div>
+        <div class="opt-label"><div><span data-i18n="color" style="font-weight:600;color:var(--ink)">Màu</span>: <span id="color-name"></span></div></div>
+        <div class="swatches" id="swatches"></div>
+      </div>
+
+      <div>
+        <div class="opt-label"><strong data-i18n="size">Size</strong><a href="#size-guide" data-i18n="sizeGuide">Hướng dẫn chọn size</a></div>
+        <div class="sizes" id="sizes"></div>
+      </div>
+
+      <div class="buy-row">
+        <div class="qty">
+          <button id="qty-dec" aria-label="Giảm">−</button>
+          <output id="qty">1</output>
+          <button id="qty-inc" aria-label="Tăng">+</button>
+        </div>
+        <button class="btn btn-primary" id="add-btn" data-i18n="addToBag">Thêm vào giỏ</button>
+      </div>
+      <div id="added-msg" class="added-msg" role="status" hidden>
+        <a class="btn btn-primary" href="cart.html" data-i18n="viewCart">Xem giỏ hàng →</a>
+      </div>
+      <a class="btn btn-outline" href="tel:+16692927189" data-i18n="call">Gọi tư vấn (669) 292-7189</a>
+
+      <div class="accordion">
+        <details open><summary data-i18n="acc1t">Chất liệu &amp; bảo quản</summary><p data-i18n="acc1b"></p></details>
+        <details id="size-guide"><summary data-i18n="acc2t">Số đo &amp; form</summary><p data-i18n="acc2b"></p></details>
+        <details><summary data-i18n="acc3t">Giao hàng &amp; đổi trả</summary><p data-i18n="acc3b"></p></details>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom" style="margin-top:0;border-top:0;padding-top:0"><span>© 2026 Style by BaoAnh Closet · <a href="tel:+16692927189">(669) 292-7189</a> · Houston, Texas</span><span>Simple · Elegant · Effortless</span></div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script type="module" src="js/auth.js"></script>
+<script src="js/product.js"></script>
+</body>
+</html>

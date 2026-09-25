@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tài khoản — Style by BaoAnh Closet</title>
+<link rel="icon" href="images/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Great+Vibes&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner simple">
+    <a class="back-link" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      <span class="label" data-i18n="home">Trang chủ</span>
+    </a>
+    <a class="logo" href="index.html">
+      <span class="logo-row"><span class="script">Style</span><span class="by">by</span><span class="name">BaoAnh</span></span>
+      <span class="closet">CLOSET</span>
+    </a>
+    <div class="header-actions">
+      <div class="lang-switch" role="group" aria-label="Ngôn ngữ / Language">
+        <button data-lang="vi" aria-pressed="true">VI</button>
+        <button data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <a class="icon-btn" href="cart.html" aria-label="Giỏ hàng / Bag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <span class="count" data-count="bag">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="container auth-page">
+  <div class="auth-card">
+    <p class="auth-notice" id="not-configured" data-i18n="notConfigured" hidden></p>
+
+    <!-- Sign in -->
+    <section id="view-signin" class="auth-view">
+      <div class="script auth-script">Style</div>
+      <h1 class="auth-title" data-i18n="signIn">Đăng nhập</h1>
+      <p class="muted auth-intro" data-i18n="signInIntro">Đăng nhập để thanh toán nhanh hơn.</p>
+      <form id="form-signin" novalidate>
+        <div class="field">
+          <label for="si-email" data-i18n="emailL">Email</label>
+          <input id="si-email" type="email" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <div class="field-top">
+            <label for="si-pw" data-i18n="password">Mật khẩu</label>
+            <button type="button" class="link-btn small" data-go="forgot" data-i18n="forgot">Quên mật khẩu?</button>
+          </div>
+          <div class="pw-wrap">
+            <input id="si-pw" type="password" autocomplete="current-password" required>
+            <button type="button" class="pw-toggle" data-i18n="show">Hiện</button>
+          </div>
+        </div>
+        <p class="form-error" role="alert"></p>
+        <button type="submit" class="btn btn-primary btn-block" data-i18n="signIn">Đăng nhập</button>
+      </form>
+      <p class="auth-switch"><span data-i18n="noAccount">Chưa có tài khoản?</span> <button type="button" class="link-btn" data-go="signup" data-i18n="signUp">Tạo tài khoản</button></p>
+    </section>
+
+    <!-- Sign up -->
+    <section id="view-signup" class="auth-view" hidden>
+      <div class="script auth-script">Style</div>
+      <h1 class="auth-title" data-i18n="signUp">Tạo tài khoản</h1>
+      <p class="muted auth-intro" data-i18n="signUpIntro">Tạo tài khoản để lần sau không phải nhập lại thông tin.</p>
+      <form id="form-signup" novalidate>
+        <div class="field">
+          <label for="su-name" data-i18n="fullName">Họ và tên</label>
+          <input id="su-name" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="su-email" data-i18n="emailL">Email</label>
+          <input id="su-email" type="email" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="su-pw" data-i18n="password">Mật khẩu</label>
+          <div class="pw-wrap">
+            <input id="su-pw" type="password" autocomplete="new-password" minlength="8" required aria-describedby="su-pw-hint">
+            <button type="button" class="pw-toggle" data-i18n="show">Hiện</button>
+          </div>
+          <span class="hint" id="su-pw-hint" data-i18n="pwShort">Mật khẩu cần ít nhất 8 ký tự.</span>
+        </div>
+        <p class="form-error" role="alert"></p>
+        <button type="submit" class="btn btn-primary btn-block" data-i18n="signUp">Tạo tài khoản</button>
+      </form>
+      <p class="auth-switch"><span data-i18n="haveAccount">Đã có tài khoản?</span> <button type="button" class="link-btn" data-go="signin" data-i18n="signIn">Đăng nhập</button></p>
+    </section>
+
+    <!-- Forgot password -->
+    <section id="view-forgot" class="auth-view" hidden>
+      <h1 class="auth-title" data-i18n="forgotTitle">Quên mật khẩu</h1>
+      <p class="muted auth-intro" data-i18n="forgotBody">Nhập email bạn đã đăng ký. Shop sẽ gửi link để bạn đặt mật khẩu mới.</p>
+      <form id="form-forgot" novalidate>
+        <div class="field">
+          <label for="fg-email" data-i18n="emailL">Email</label>
+          <input id="fg-email" type="email" autocomplete="email" required>
+        </div>
+        <p class="form-error" role="alert"></p>
+        <p class="form-ok" role="status" hidden data-i18n="resetSent"></p>
+        <button type="submit" class="btn btn-primary btn-block" data-i18n="sendLink">Gửi link đặt lại</button>
+      </form>
+      <p class="auth-switch"><button type="button" class="link-btn" data-go="signin" data-i18n="backToSignIn">← Quay lại đăng nhập</button></p>
+    </section>
+
+    <!-- Signed in -->
+    <section id="view-account" class="auth-view" hidden>
+      <div class="avatar" id="acc-avatar" aria-hidden="true"></div>
+      <h1 class="auth-title"><span data-i18n="hello">Xin chào</span>, <span id="acc-name"></span></h1>
+      <p class="muted" id="acc-email"></p>
+      <p class="form-ok" id="acc-msg" role="status" hidden></p>
+      <div class="acc-actions">
+        <a class="btn btn-primary btn-block" href="index.html#new" data-i18n="shopNowShort">Mua sắm ngay</a>
+        <button type="button" class="btn btn-outline btn-block" id="btn-changepw" data-i18n="changePw">Đổi mật khẩu</button>
+        <button type="button" class="link-btn" id="btn-signout" data-i18n="signOut">Đăng xuất</button>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script src="js/main.js"></script>
+<script type="module" src="js/account.js"></script>
+</body>
+</html>

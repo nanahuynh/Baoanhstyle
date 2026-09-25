@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thanh toán — Style by BaoAnh Closet</title>
+<link rel="icon" href="images/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Great+Vibes&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner simple">
+    <a class="back-link" href="cart.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      <span class="label" data-i18n="backToCart">Quay lại giỏ hàng</span>
+    </a>
+    <a class="logo" href="index.html">
+      <span class="logo-row"><span class="script">Style</span><span class="by">by</span><span class="name">BaoAnh</span></span>
+      <span class="closet">CLOSET</span>
+    </a>
+    <div class="header-actions">
+      <div class="lang-switch" role="group" aria-label="Ngôn ngữ / Language">
+        <button data-lang="vi" aria-pressed="true">VI</button>
+        <button data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <a class="icon-btn" href="account.html" data-account-link aria-label="Tài khoản / Account">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="container shop-page">
+
+  <!-- Order placed -->
+  <section id="done" class="done" hidden>
+    <svg width="160" height="16" viewBox="0 0 160 16" fill="none" stroke="#d9a99b" stroke-width="1" aria-hidden="true"><path d="M0 8h66"/><path d="M94 8h66"/><path d="M80 13s-6-3.6-6-7.5A3.2 3.2 0 0 1 80 4a3.2 3.2 0 0 1 6 1.5C86 9.4 80 13 80 13z"/></svg>
+    <h1 class="display" data-i18n="thanks">Cảm ơn bạn đã đặt hàng!</h1>
+    <p><span data-i18n="orderNo">Mã đơn hàng</span>: <strong id="done-no"></strong></p>
+    <p class="muted" data-i18n="thanksBody"></p>
+    <p class="pay-note" id="done-pay"></p>
+    <a class="btn btn-primary" href="index.html" data-i18n="continueShopping">Tiếp tục mua sắm</a>
+  </section>
+
+  <!-- Empty -->
+  <div id="co-empty" class="empty" hidden>
+    <p data-i18n="cartEmpty">Giỏ hàng của bạn đang trống.</p>
+    <a class="btn btn-primary" href="index.html#new" data-i18n="continueShopping">Tiếp tục mua sắm</a>
+  </div>
+
+  <div id="co-main" hidden>
+    <h1 class="display page-title" data-i18n="checkout">Thanh toán</h1>
+    <div class="shop-layout">
+      <form id="co-form" class="co-form" novalidate>
+        <fieldset>
+          <legend data-i18n="contactInfo">Thông tin liên hệ</legend>
+          <a class="login-fill" id="login-fill" href="account.html?next=checkout.html" data-i18n="loginToFill">Đăng nhập để điền nhanh</a>
+          <div class="field">
+            <label for="f-name" data-i18n="fullName">Họ và tên</label>
+            <input id="f-name" name="name" autocomplete="name" required>
+            <span class="err"></span>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="f-phone" data-i18n="phone">Số điện thoại</label>
+              <input id="f-phone" name="phone" type="tel" autocomplete="tel" required>
+              <span class="err"></span>
+            </div>
+            <div class="field">
+              <label for="f-email" data-i18n="emailL">Email</label>
+              <input id="f-email" name="email" type="email" autocomplete="email">
+              <span class="err"></span>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend data-i18n="delivery">Cách nhận hàng</legend>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="delivery" value="ship" checked><span data-i18n="ship">Giao tận nơi</span></label>
+            <label class="choice"><input type="radio" name="delivery" value="pickup"><span data-i18n="pickup">Nhận tại shop (Houston, TX)</span></label>
+          </div>
+          <div id="address-fields">
+            <div class="field">
+              <label for="f-address" data-i18n="address">Địa chỉ</label>
+              <input id="f-address" name="address" autocomplete="street-address" required>
+              <span class="err"></span>
+            </div>
+            <div class="field-row three">
+              <div class="field">
+                <label for="f-city" data-i18n="city">Thành phố</label>
+                <input id="f-city" name="city" autocomplete="address-level2" required>
+                <span class="err"></span>
+              </div>
+              <div class="field">
+                <label for="f-state" data-i18n="stateL">Tiểu bang</label>
+                <input id="f-state" name="state" autocomplete="address-level1" value="TX" required>
+                <span class="err"></span>
+              </div>
+              <div class="field">
+                <label for="f-zip" data-i18n="zip">ZIP code</label>
+                <input id="f-zip" name="zip" autocomplete="postal-code" inputmode="numeric" required>
+                <span class="err"></span>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend data-i18n="payment">Thanh toán bằng</legend>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="payment" value="zelle" checked><span>Zelle</span></label>
+            <label class="choice"><input type="radio" name="payment" value="venmo"><span>Venmo</span></label>
+            <label class="choice"><input type="radio" name="payment" value="cash"><span data-i18n="cash">Tiền mặt khi nhận hàng</span></label>
+          </div>
+          <p class="pay-note" id="pay-note"></p>
+        </fieldset>
+
+        <fieldset>
+          <div class="field">
+            <label for="f-note" data-i18n="note">Ghi chú (không bắt buộc)</label>
+            <textarea id="f-note" name="note" rows="3"></textarea>
+          </div>
+        </fieldset>
+
+        <p class="form-msg" id="co-msg" role="alert"></p>
+        <button type="submit" class="btn btn-primary btn-block" id="co-submit" data-i18n="placeOrder">Đặt hàng</button>
+      </form>
+
+      <aside class="summary">
+        <h2 class="summary-title" data-i18n="orderSummary">Đơn hàng của bạn</h2>
+        <ul class="mini-items" id="mini-items"></ul>
+        <div class="summary-row"><span data-i18n="subtotal">Tạm tính</span><span id="co-subtotal"></span></div>
+        <div class="summary-row"><span data-i18n="shippingFee">Phí giao hàng</span><span id="co-shipping"></span></div>
+        <div class="summary-row total"><span data-i18n="total">Tổng cộng</span><span id="co-total"></span></div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<script src="js/main.js"></script>
+<script type="module" src="js/auth.js"></script>
+<script src="js/checkout.js"></script>
+</body>
+</html>

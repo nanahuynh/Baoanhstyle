@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Giỏ hàng — Style by BaoAnh Closet</title>
+<link rel="icon" href="images/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Great+Vibes&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner simple">
+    <a class="back-link" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      <span class="label" data-i18n="continueShopping">Tiếp tục mua sắm</span>
+    </a>
+    <a class="logo" href="index.html">
+      <span class="logo-row"><span class="script">Style</span><span class="by">by</span><span class="name">BaoAnh</span></span>
+      <span class="closet">CLOSET</span>
+    </a>
+    <div class="header-actions">
+      <div class="lang-switch" role="group" aria-label="Ngôn ngữ / Language">
+        <button data-lang="vi" aria-pressed="true">VI</button>
+        <button data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <a class="icon-btn" href="account.html" data-account-link aria-label="Tài khoản / Account">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="container shop-page">
+  <h1 class="display page-title"><span data-i18n="cart">Giỏ hàng</span> <span class="muted page-count" id="cart-count"></span></h1>
+
+  <div id="cart-empty" class="empty" hidden>
+    <p data-i18n="cartEmpty">Giỏ hàng của bạn đang trống.</p>
+    <a class="btn btn-primary" href="index.html#new" data-i18n="continueShopping">Tiếp tục mua sắm</a>
+  </div>
+
+  <div id="cart-full" class="shop-layout" hidden>
+    <ul class="line-items" id="line-items"></ul>
+
+    <aside class="summary">
+      <h2 class="summary-title" data-i18n="orderSummary">Đơn hàng của bạn</h2>
+      <div class="summary-row"><span data-i18n="subtotal">Tạm tính</span><span id="sum-subtotal"></span></div>
+      <div class="summary-row muted"><span data-i18n="shippingFee">Phí giao hàng</span><span data-i18n="shipLater">Tính ở bước thanh toán</span></div>
+      <a class="btn btn-primary btn-block" href="checkout.html" data-i18n="checkout">Thanh toán</a>
+      <p class="summary-help">(669) 292-7189 · Houston, Texas</p>
+    </aside>
+  </div>
+</main>
+
+<script src="js/main.js"></script>
+<script type="module" src="js/auth.js"></script>
+<script src="js/cart.js"></script>
+</body>
+</html>
