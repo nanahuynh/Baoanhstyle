@@ -26,7 +26,7 @@ const I18N = {
     // product page
     home: 'Trang chủ', dresses: 'Đầm', price: '[Giá]',
     desc: '[Mô tả sản phẩm: chất liệu, form dáng, dịp mặc.]',
-    color: 'Màu', size: 'Size', addToBag: 'Thêm vào giỏ', added: 'Đã thêm ✓', call: 'Gọi tư vấn (669) 292-7189',
+    color: 'Màu', size: 'Size', addToBag: 'Thêm vào giỏ', added: 'Đã thêm ✓', call: 'Gọi tư vấn (669) 292-7189', messenger: 'Nhắn tin Messenger',
     acc1t: 'Chất liệu & bảo quản', acc1b: '[Thành phần vải, cách giặt]',
     acc2t: 'Số đo & form', acc2b: '[Bảng số đo theo size]',
     acc3t: 'Giao hàng & đổi trả', acc3b: '[Chính sách của shop]',
@@ -72,7 +72,7 @@ const I18N = {
     tagline: 'Simple · Elegant · Effortless',
     home: 'Home', dresses: 'Dresses', price: '[Price]',
     desc: '[Product description: fabric, fit, occasion.]',
-    color: 'Color', size: 'Size', addToBag: 'Add to bag', added: 'Added ✓', call: 'Call (669) 292-7189',
+    color: 'Color', size: 'Size', addToBag: 'Add to bag', added: 'Added ✓', call: 'Call (669) 292-7189', messenger: 'Message on Messenger',
     acc1t: 'Fabric & care', acc1b: '[Fabric content, care]',
     acc2t: 'Measurements & fit', acc2b: '[Size chart]',
     acc3t: 'Shipping & returns', acc3b: '[Store policy]',
