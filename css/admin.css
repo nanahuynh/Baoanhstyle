@@ -1,4 +1,4 @@
-/* Admin — Style by BaoAnh Closet */
+/* Admin — Style by BaoAnh */
 body.admin { background: var(--surface); }
 .admin-bar {
   position: sticky; top: 0; z-index: 20; height: 64px; padding: 0 24px; background: #fff;
@@ -163,3 +163,15 @@ tr.out td { background: #fdf0ee; }
   .order-actions .admin-input { width: 100%; }
   .order-actions label { flex: 1 1 100%; }
 }
+
+/* returns */
+.return-card { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
+.return-head { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; font-size: 14px; }
+.return-head .pill { margin-left: auto; }
+.return-card p { font-size: 14px; }
+.grow-label { flex: 1; min-width: 240px; }
+.grow-label .admin-input { width: 100% !important; }
+.pill.rs-requested { background: #e4ecfb; color: #274b8f; }
+.pill.rs-approved, .pill.rs-received { background: #fbe6c8; color: #6b4a1f; }
+.pill.rs-completed { background: #dcefdf; color: #2f6b3a; }
+.pill.rs-rejected { background: #f6d3cf; color: var(--sale); }
