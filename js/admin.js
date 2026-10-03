@@ -13,13 +13,16 @@ const $ = id => document.getElementById(id);
 const db = configured ? getFirestore(app) : null;
 
 const STATUS = {
-  new: 'Mới', confirmed: 'Đã xác nhận', shipping: 'Đang giao', done: 'Hoàn tất', cancelled: 'Đã hủy'
+  new: 'Mới', confirmed: 'Đã xác nhận', shipping: 'Đang giao', done: 'Đã giao', cancelled: 'Đã hủy'
 };
 const SOLD = ['confirmed', 'shipping', 'done'];   // statuses that count as sold / take stock
 const KIND = { capital: 'Góp vốn', withdraw: 'Rút vốn', expense: 'Chi phí', income: 'Thu khác' };
 const PAY = { zelle: 'Zelle', venmo: 'Venmo', cash: 'Tiền mặt' };
 
-const data = { orders: [], inventory: [], ledger: [] };
+const data = { orders: [], inventory: [], ledger: [], returns: [] };
+const RSTATUS = { requested: 'Mới gửi', approved: 'Đã chấp nhận', rejected: 'Từ chối', received: 'Đã nhận hàng trả', completed: 'Hoàn tất' };
+const REASON = { 'size-small': 'Size nhỏ', 'size-big': 'Size lớn', 'not-like-photo': 'Không giống hình', defect: 'Hàng lỗi / hư', 'changed-mind': 'Đổi ý', other: 'Lý do khác' };
+const SHIP_NAME = { standard: 'Giao tiêu chuẩn', express: 'Giao nhanh', pickup: 'Nhận tại shop' };
 const ui = { tab: 'overview', view: 'orders', search: '', status: '', customer: null, month: '', editing: null, stockItem: null };
 const unsub = [];
 const openCards = new Set();
@@ -45,7 +48,8 @@ function toast(msg) {
 }
 function orderTotal(o) {
   if (typeof o.paidTotal === 'number') return o.paidTotal;
-  return (Number(o.subtotal) || 0) + (Number(o.shipping) || 0);
+  if (typeof o.total === 'number') return o.total;
+  return (Number(o.subtotal) || 0) - (Number(o.discount) || 0) + (Number(o.shipping) || 0);
 }
 function priceMissing(o) { return typeof o.paidTotal !== 'number' && (o.subtotal == null || o.items.some(i => typeof i.price !== 'number')); }
 function customerKey(c) {
@@ -133,12 +137,19 @@ function startApp() {
     data.ledger = s.docs.map(d => ({ _id: d.id, ...d.data() }));
     render();
   }, onErr));
+  unsub.push(onSnapshot(collection(db, 'returns'), s => {
+    data.returns = s.docs.map(d => ({ _id: d.id, items: [], customer: {}, ...d.data() }))
+      .sort((a, b) => (toDate(b.createdAt) || 0) - (toDate(a.createdAt) || 0));
+    render();
+  }, onErr));
 }
 
 // ---------- numbers ----------
 function totals() {
   const sold = data.orders.filter(o => SOLD.includes(o.status));
-  const revenue = sold.reduce((s, o) => s + orderTotal(o), 0);
+  // sales tax is collected for the state, not shop income
+  const taxOwed = sold.reduce((s, o) => s + (Number(o.tax) || 0), 0);
+  const revenue = sold.reduce((s, o) => s + orderTotal(o), 0) - taxOwed;
   const cogs = sold.reduce((s, o) => s + o.items.reduce((a, i) => a + (Number(i.cost) || 0) * i.qty, 0), 0);
   const sum = (kind, filter = () => true) => data.ledger.filter(l => l.kind === kind && filter(l)).reduce((s, l) => s + (Number(l.amount) || 0), 0);
   const capital = sum('capital');
@@ -148,8 +159,8 @@ function totals() {
   const income = sum('income');
   const stockValue = data.inventory.reduce((s, v) => s + (Number(v.qty) || 0) * (Number(v.cost) || 0), 0);
   const profit = revenue + income - cogs - (expense - purchase);
-  const cash = capital - withdraw + revenue + income - expense;
-  return { revenue, cogs, capital, withdraw, expense, purchase, income, stockValue, profit, cash, soldCount: sold.length };
+  const cash = capital - withdraw + revenue + taxOwed + income - expense;
+  return { revenue, taxOwed, cogs, capital, withdraw, expense, purchase, income, stockValue, profit, cash, soldCount: sold.length };
 }
 
 // ---------- render ----------
@@ -158,10 +169,13 @@ function render() {
   const low = data.inventory.filter(v => (Number(v.qty) || 0) <= (Number(v.lowAt) || 0));
   $('badge-new').hidden = !newCount; $('badge-new').textContent = newCount;
   $('badge-low').hidden = !low.length; $('badge-low').textContent = low.length;
+  const reqCount = data.returns.filter(r => r.status === 'requested').length;
+  $('badge-ret').hidden = !reqCount; $('badge-ret').textContent = reqCount;
   renderOverview(low);
   renderOrders();
   renderInventory();
   renderLedger();
+  renderReturns();
 }
 
 function kpi(label, value, note, tone) {
@@ -172,9 +186,9 @@ function renderOverview(low) {
   const t = totals();
   const missing = data.orders.filter(o => SOLD.includes(o.status) && priceMissing(o)).length;
   $('kpis').innerHTML = [
-    kpi('Doanh thu', fmt(t.revenue), `${t.soldCount} đơn đã bán${missing ? ` · <b>${missing} đơn chưa có giá</b>` : ''}`),
+    kpi('Doanh thu', fmt(t.revenue), `${t.soldCount} đơn đã bán (chưa gồm thuế)${missing ? ` · <b>${missing} đơn chưa có giá</b>` : ''}`),
     kpi('Lãi ước tính', fmt(t.profit), 'sau giá vốn và chi phí', t.profit < 0 ? 'neg' : 'pos'),
-    kpi('Tiền mặt ước tính', fmt(t.cash), 'vốn − rút + thu − chi'),
+    kpi('Tiền mặt ước tính', fmt(t.cash), t.taxOwed ? `gồm ${fmt(t.taxOwed)} thuế phải nộp` : 'vốn − rút + thu − chi'),
     kpi('Vốn đã góp', fmt(t.capital - t.withdraw), t.withdraw ? `đã rút ${fmt(t.withdraw)}` : ''),
     kpi('Tổng chi phí', fmt(t.expense), `trong đó nhập hàng ${fmt(t.purchase)}`),
     kpi('Hàng tồn (giá vốn)', fmt(t.stockValue), `${data.inventory.reduce((s, v) => s + (Number(v.qty) || 0), 0)} cái trong kho`)
@@ -218,7 +232,10 @@ function orderCard(o) {
       <dl class="order-meta">
         <dt>Email</dt><dd>${esc(o.customer.email) || '—'}</dd>
         <dt>Nhận hàng</dt><dd>${addr}</dd>
+        <dt>Giao hàng</dt><dd>${SHIP_NAME[o.shippingMethod] || (o.delivery === 'pickup' ? 'Nhận tại shop' : 'Giao tận nơi')}</dd>
         <dt>Thanh toán</dt><dd>${PAY[o.payment] || esc(o.payment)}</dd>
+        ${typeof o.tax === 'number' ? `<dt>Thuế</dt><dd>${fmt(o.tax)} (${+(o.taxRate * 100).toFixed(3)}%)</dd>` : ''}
+        ${o.promoCode ? `<dt>Mã giảm giá</dt><dd>${esc(o.promoCode)}${typeof o.discount === 'number' ? ' (−' + fmt(o.discount) + ')' : ''}</dd>` : ''}
         ${o.note ? `<dt>Ghi chú</dt><dd>${esc(o.note)}</dd>` : ''}
       </dl>
       <div class="order-actions">
@@ -230,6 +247,12 @@ function orderCard(o) {
         <label>Tổng tiền thực thu (USD)
           <input class="admin-input" type="number" min="0" step="0.01" data-paid="${o._id}" value="${typeof o.paidTotal === 'number' ? o.paidTotal : ''}" placeholder="${o.subtotal != null ? orderTotal(o) : 'nhập số tiền'}">
         </label>
+        ${o.delivery !== 'pickup' ? `<label>Hãng vận chuyển
+          <select class="admin-input" data-carrier="${o._id}">${['', 'USPS', 'UPS', 'FedEx', 'Khác'].map(c => `<option${(o.carrier || '') === c ? ' selected' : ''}>${c}</option>`).join('')}</select>
+        </label>
+        <label>Mã vận đơn (tracking)
+          <input class="admin-input" data-tracking="${o._id}" value="${esc(o.trackingNo || '')}" placeholder="khách sẽ thấy trong tài khoản">
+        </label>` : ''}
         ${stockNote}
         <a class="btn btn-outline btn-sm" href="tel:${esc(String(o.customer.phone || '').replace(/[^\d+]/g, ''))}">Gọi khách</a>
         <button class="link-btn" data-customer="${esc(customerKey(o.customer))}">Lịch sử khách này</button>
@@ -339,7 +362,7 @@ async function changeStatus(id, next) {
       const o = snap.data();
       const willTake = SOLD.includes(next) && !o.stockApplied;
       const willReturn = next === 'cancelled' && o.stockApplied;
-      const update = { status: next, updatedAt: serverTimestamp() };
+      const update = { status: next, updatedAt: serverTimestamp(), ['history.' + next]: serverTimestamp() };
       const missing = [];
       if (willTake || willReturn) {
         // read every stock row first (transactions need reads before writes)
@@ -556,3 +579,47 @@ document.addEventListener('toggle', e => {
     if (e.target.open) openCards.add(e.target.id); else openCards.delete(e.target.id);
   }
 }, true);
+
+// ---------- returns / exchanges ----------
+function renderReturns() {
+  const list = data.returns;
+  $('returns-view').innerHTML = list.length ? list.map(r => {
+    const order = data.orders.find(o => o._id === r.orderId);
+    return `<div class="admin-box return-card">
+      <div class="return-head">
+        <b>${r.type === 'exchange' ? 'ĐỔI HÀNG' : 'TRẢ HÀNG'}</b>
+        <span>Đơn <button class="link-btn" data-open-order="${esc(r.orderId)}">${esc(r.orderNumber)}</button></span>
+        <span>${esc(r.customer && r.customer.name)} · ${esc(r.customer && r.customer.phone)}</span>
+        <span class="muted">${fmtDate(toDate(r.createdAt))}</span>
+        <span class="pill rs-${esc(r.status)}">${RSTATUS[r.status] || esc(r.status)}</span>
+      </div>
+      <table class="admin-table compact">
+        <thead><tr><th>Sản phẩm</th><th>Màu</th><th>Size</th><th>SL</th>${r.type === 'exchange' ? '<th>Đổi sang size</th>' : ''}</tr></thead>
+        <tbody>${(r.items || []).map(i => `<tr><td>${esc(i.product || productName(i.id))}</td><td>${esc(i.colorName || colorLabel(i.color))}</td><td>${esc(i.size)}</td><td>${Number(i.qty) || 0}</td>${r.type === 'exchange' ? `<td><b>${esc(i.newSize)}</b></td>` : ''}</tr>`).join('')}</tbody>
+      </table>
+      <p><b>Lý do:</b> ${REASON[r.reason] || esc(r.reason)}${r.note ? ` · ${esc(r.note)}` : ''}</p>
+      ${order ? '' : '<p class="muted">Không tìm thấy đơn gốc.</p>'}
+      <div class="order-actions">
+        <label>Trạng thái
+          <select class="admin-input" data-rstatus="${r._id}">
+            ${Object.entries(RSTATUS).map(([k, v]) => `<option value="${k}"${k === r.status ? ' selected' : ''}>${v}</option>`).join('')}
+          </select>
+        </label>
+        <label class="grow-label">Nhắn cho khách (hiện trong tài khoản của khách)
+          <input class="admin-input" data-rreply="${r._id}" value="${esc(r.reply || '')}" placeholder="vd: Gửi hàng về địa chỉ shop, ghi mã đơn">
+        </label>
+        <a class="btn btn-outline btn-sm" href="tel:${esc(String((r.customer && r.customer.phone) || '').replace(/[^\d+]/g, ''))}">Gọi khách</a>
+      </div>
+    </div>`;
+  }).join('') : '<p class="muted empty-row">Chưa có yêu cầu đổi / trả nào.</p>';
+}
+
+document.addEventListener('change', async e => {
+  const el = e.target;
+  try {
+    if (el.dataset.carrier) { await updateDoc(doc(db, 'orders', el.dataset.carrier), { carrier: el.value }); toast('Đã lưu hãng vận chuyển.'); }
+    if (el.dataset.tracking) { await updateDoc(doc(db, 'orders', el.dataset.tracking), { trackingNo: el.value.trim() }); toast('Đã lưu mã vận đơn.'); }
+    if (el.dataset.rstatus) { await updateDoc(doc(db, 'returns', el.dataset.rstatus), { status: el.value, updatedAt: serverTimestamp() }); toast('Đã cập nhật yêu cầu.'); }
+    if (el.dataset.rreply) { await updateDoc(doc(db, 'returns', el.dataset.rreply), { reply: el.value.trim() }); toast('Đã lưu lời nhắn.'); }
+  } catch (err) { toast('Lỗi: ' + err.message); }
+});
