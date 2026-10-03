@@ -3,12 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Thanh toán — Style by BaoAnh Closet</title>
+<title>Thanh toán — Style by BaoAnh</title>
 <link rel="icon" href="images/logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Great+Vibes&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/flow.css">
 </head>
 <body>
 
@@ -20,7 +21,6 @@
     </a>
     <a class="logo" href="index.html">
       <span class="logo-row"><span class="script">Style</span><span class="by">by</span><span class="name">BaoAnh</span></span>
-      <span class="closet">CLOSET</span>
     </a>
     <div class="header-actions">
       <div class="lang-switch" role="group" aria-label="Ngôn ngữ / Language">
@@ -35,108 +35,150 @@
 </header>
 
 <main class="container shop-page">
-
-  <!-- Order placed -->
-  <section id="done" class="done" hidden>
-    <svg width="160" height="16" viewBox="0 0 160 16" fill="none" stroke="#d9a99b" stroke-width="1" aria-hidden="true"><path d="M0 8h66"/><path d="M94 8h66"/><path d="M80 13s-6-3.6-6-7.5A3.2 3.2 0 0 1 80 4a3.2 3.2 0 0 1 6 1.5C86 9.4 80 13 80 13z"/></svg>
-    <h1 class="display" data-i18n="thanks">Cảm ơn bạn đã đặt hàng!</h1>
-    <p><span data-i18n="orderNo">Mã đơn hàng</span>: <strong id="done-no"></strong></p>
-    <p class="muted" data-i18n="thanksBody"></p>
-    <p class="pay-note" id="done-pay"></p>
-    <a class="btn btn-primary" href="index.html" data-i18n="continueShopping">Tiếp tục mua sắm</a>
-  </section>
-
-  <!-- Empty -->
   <div id="co-empty" class="empty" hidden>
     <p data-i18n="cartEmpty">Giỏ hàng của bạn đang trống.</p>
-    <a class="btn btn-primary" href="index.html#new" data-i18n="continueShopping">Tiếp tục mua sắm</a>
+    <a class="btn btn-primary" href="shop.html" data-i18n="continueShopping">Tiếp tục mua sắm</a>
   </div>
 
   <div id="co-main" hidden>
     <h1 class="display page-title" data-i18n="checkout">Thanh toán</h1>
     <div class="shop-layout">
-      <form id="co-form" class="co-form" novalidate>
-        <fieldset>
-          <legend data-i18n="contactInfo">Thông tin liên hệ</legend>
-          <a class="login-fill" id="login-fill" href="account.html?next=checkout.html" data-i18n="loginToFill">Đăng nhập để điền nhanh</a>
-          <div class="field">
-            <label for="f-name" data-i18n="fullName">Họ và tên</label>
-            <input id="f-name" name="name" autocomplete="name" required>
-            <span class="err"></span>
-          </div>
-          <div class="field-row">
-            <div class="field">
-              <label for="f-phone" data-i18n="phone">Số điện thoại</label>
-              <input id="f-phone" name="phone" type="tel" autocomplete="tel" required>
-              <span class="err"></span>
-            </div>
-            <div class="field">
-              <label for="f-email" data-i18n="emailL">Email</label>
-              <input id="f-email" name="email" type="email" autocomplete="email">
-              <span class="err"></span>
-            </div>
-          </div>
-        </fieldset>
+      <div class="steps" id="steps">
 
-        <fieldset>
-          <legend data-i18n="delivery">Cách nhận hàng</legend>
-          <div class="choices">
-            <label class="choice"><input type="radio" name="delivery" value="ship" checked><span data-i18n="ship">Giao tận nơi</span></label>
-            <label class="choice"><input type="radio" name="delivery" value="pickup"><span data-i18n="pickup">Nhận tại shop (Houston, TX)</span></label>
-          </div>
-          <div id="address-fields">
+        <!-- 1. Contact -->
+        <section class="step" data-step="contact">
+          <header class="step-head">
+            <span class="step-n">1</span>
+            <h2 data-i18n="contactInfo">Thông tin liên hệ</h2>
+            <button type="button" class="link-btn small step-edit" data-edit="contact" data-en="Edit">Sửa</button>
+          </header>
+          <div class="step-summary"></div>
+          <form class="step-body" novalidate>
+            <a class="login-fill" id="login-fill" href="account.html?next=checkout.html" data-en="Have an account? Sign in to fill this in">Đã có tài khoản? Đăng nhập để điền nhanh</a>
             <div class="field">
-              <label for="f-address" data-i18n="address">Địa chỉ</label>
-              <input id="f-address" name="address" autocomplete="street-address" required>
+              <label for="f-name" data-i18n="fullName">Họ và tên</label>
+              <input id="f-name" name="name" autocomplete="name" required>
               <span class="err"></span>
             </div>
-            <div class="field-row three">
+            <div class="field-row">
               <div class="field">
-                <label for="f-city" data-i18n="city">Thành phố</label>
-                <input id="f-city" name="city" autocomplete="address-level2" required>
+                <label for="f-phone" data-i18n="phone">Số điện thoại</label>
+                <input id="f-phone" name="phone" type="tel" autocomplete="tel" required>
                 <span class="err"></span>
               </div>
               <div class="field">
-                <label for="f-state" data-i18n="stateL">Tiểu bang</label>
-                <input id="f-state" name="state" autocomplete="address-level1" value="TX" required>
-                <span class="err"></span>
-              </div>
-              <div class="field">
-                <label for="f-zip" data-i18n="zip">ZIP code</label>
-                <input id="f-zip" name="zip" autocomplete="postal-code" inputmode="numeric" required>
+                <label for="f-email" data-en="Email (for your receipt)">Email (để nhận xác nhận đơn)</label>
+                <input id="f-email" name="email" type="email" autocomplete="email">
                 <span class="err"></span>
               </div>
             </div>
-          </div>
-        </fieldset>
+            <button type="submit" class="btn btn-primary" data-en="Continue">Tiếp tục</button>
+          </form>
+        </section>
 
-        <fieldset>
-          <legend data-i18n="payment">Thanh toán bằng</legend>
-          <div class="choices">
-            <label class="choice"><input type="radio" name="payment" value="zelle" checked><span>Zelle</span></label>
-            <label class="choice"><input type="radio" name="payment" value="venmo"><span>Venmo</span></label>
-            <label class="choice"><input type="radio" name="payment" value="cash"><span data-i18n="cash">Tiền mặt khi nhận hàng</span></label>
-          </div>
-          <p class="pay-note" id="pay-note"></p>
-        </fieldset>
+        <!-- 2. Shipping address -->
+        <section class="step" data-step="address">
+          <header class="step-head">
+            <span class="step-n">2</span>
+            <h2 data-en="Shipping address">Địa chỉ giao hàng</h2>
+            <button type="button" class="link-btn small step-edit" data-edit="address" data-en="Edit">Sửa</button>
+          </header>
+          <div class="step-summary"></div>
+          <form class="step-body" novalidate>
+            <label class="choice pickup-choice"><input type="checkbox" id="f-pickup"><span data-en="I will pick up in store (Houston, TX), no address needed">Tôi nhận tại shop (Houston, TX), không cần địa chỉ</span></label>
+            <div id="address-area">
+              <div class="saved-addresses" id="saved-addresses"></div>
+              <div id="address-fields">
+                <div class="field">
+                  <label for="f-address" data-i18n="address">Địa chỉ</label>
+                  <input id="f-address" name="address" autocomplete="street-address" required>
+                  <span class="err"></span>
+                </div>
+                <div class="field-row three">
+                  <div class="field">
+                    <label for="f-city" data-i18n="city">Thành phố</label>
+                    <input id="f-city" name="city" autocomplete="address-level2" required>
+                    <span class="err"></span>
+                  </div>
+                  <div class="field">
+                    <label for="f-state" data-i18n="stateL">Tiểu bang</label>
+                    <input id="f-state" name="state" autocomplete="address-level1" value="TX" required>
+                    <span class="err"></span>
+                  </div>
+                  <div class="field">
+                    <label for="f-zip" data-i18n="zip">ZIP code</label>
+                    <input id="f-zip" name="zip" autocomplete="postal-code" inputmode="numeric" required>
+                    <span class="err"></span>
+                  </div>
+                </div>
+                <label class="check-line" id="save-address-wrap" hidden><input type="checkbox" id="f-save-address" checked> <span data-en="Save this address to my account">Lưu địa chỉ này vào tài khoản</span></label>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" data-en="Continue">Tiếp tục</button>
+          </form>
+        </section>
 
-        <fieldset>
-          <div class="field">
-            <label for="f-note" data-i18n="note">Ghi chú (không bắt buộc)</label>
-            <textarea id="f-note" name="note" rows="3"></textarea>
-          </div>
-        </fieldset>
+        <!-- 3. Shipping method -->
+        <section class="step" data-step="method">
+          <header class="step-head">
+            <span class="step-n">3</span>
+            <h2 data-en="Shipping method">Cách giao hàng</h2>
+            <button type="button" class="link-btn small step-edit" data-edit="method" data-en="Edit">Sửa</button>
+          </header>
+          <div class="step-summary"></div>
+          <form class="step-body" novalidate>
+            <div class="choices" id="method-options"></div>
+            <button type="submit" class="btn btn-primary" data-en="Continue">Tiếp tục</button>
+          </form>
+        </section>
 
-        <p class="form-msg" id="co-msg" role="alert"></p>
-        <button type="submit" class="btn btn-primary btn-block" id="co-submit" data-i18n="placeOrder">Đặt hàng</button>
-      </form>
+        <!-- 4. Payment -->
+        <section class="step" data-step="payment">
+          <header class="step-head">
+            <span class="step-n">4</span>
+            <h2 data-en="Payment">Thanh toán</h2>
+            <button type="button" class="link-btn small step-edit" data-edit="payment" data-en="Edit">Sửa</button>
+          </header>
+          <div class="step-summary"></div>
+          <form class="step-body" novalidate>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="payment" value="zelle" checked><span>Zelle</span></label>
+              <label class="choice"><input type="radio" name="payment" value="venmo"><span>Venmo</span></label>
+              <label class="choice"><input type="radio" name="payment" value="cash"><span data-i18n="cash">Tiền mặt khi nhận hàng</span></label>
+            </div>
+            <p class="pay-note" id="pay-note"></p>
+            <button type="submit" class="btn btn-primary" data-en="Review order">Xem lại đơn hàng</button>
+          </form>
+        </section>
+
+        <!-- 5. Review order -->
+        <section class="step" data-step="review">
+          <header class="step-head">
+            <span class="step-n">5</span>
+            <h2 data-en="Review order">Xem lại đơn hàng</h2>
+          </header>
+          <form class="step-body" id="review-form" novalidate>
+            <ul class="mini-items review-items" id="review-items"></ul>
+            <div class="field">
+              <label for="f-note" data-i18n="note">Ghi chú (không bắt buộc)</label>
+              <textarea id="f-note" name="note" rows="3"></textarea>
+            </div>
+            <p class="muted small-print" data-en="By placing your order, you agree to our delivery & returns policy.">Khi đặt hàng, bạn đồng ý với chính sách giao hàng & đổi trả của shop.</p>
+            <p class="form-msg" id="co-msg" role="alert"></p>
+            <button type="submit" class="btn btn-primary btn-block" id="co-submit" data-i18n="placeOrder">Đặt hàng</button>
+          </form>
+        </section>
+      </div>
 
       <aside class="summary">
         <h2 class="summary-title" data-i18n="orderSummary">Đơn hàng của bạn</h2>
         <ul class="mini-items" id="mini-items"></ul>
         <div class="summary-row"><span data-i18n="subtotal">Tạm tính</span><span id="co-subtotal"></span></div>
+        <div class="summary-row discount" id="co-row-discount" hidden><span><span data-en="Discount">Giảm giá</span> <span id="co-code"></span></span><span id="co-discount"></span></div>
         <div class="summary-row"><span data-i18n="shippingFee">Phí giao hàng</span><span id="co-shipping"></span></div>
+        <div class="summary-row"><span id="co-tax-label">Thuế</span><span id="co-tax"></span></div>
         <div class="summary-row total"><span data-i18n="total">Tổng cộng</span><span id="co-total"></span></div>
+        <a href="cart.html" class="link-btn small" data-en="Edit bag">Sửa giỏ hàng</a>
       </aside>
     </div>
   </div>
@@ -144,6 +186,6 @@
 
 <script src="js/main.js"></script>
 <script type="module" src="js/auth.js"></script>
-<script src="js/checkout.js"></script>
+<script type="module" src="js/checkout.js"></script>
 </body>
 </html>

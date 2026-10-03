@@ -3,12 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Giỏ hàng — Style by BaoAnh Closet</title>
+<title>Giỏ hàng — Style by BaoAnh</title>
 <link rel="icon" href="images/logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Great+Vibes&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/flow.css">
 </head>
 <body>
 
@@ -20,7 +21,6 @@
     </a>
     <a class="logo" href="index.html">
       <span class="logo-row"><span class="script">Style</span><span class="by">by</span><span class="name">BaoAnh</span></span>
-      <span class="closet">CLOSET</span>
     </a>
     <div class="header-actions">
       <div class="lang-switch" role="group" aria-label="Ngôn ngữ / Language">
@@ -47,8 +47,26 @@
 
     <aside class="summary">
       <h2 class="summary-title" data-i18n="orderSummary">Đơn hàng của bạn</h2>
+
+      <form class="promo" id="promo-form" novalidate>
+        <label for="promo-input" data-en="Promo code">Mã giảm giá</label>
+        <div class="promo-row">
+          <input id="promo-input" autocomplete="off" autocapitalize="characters" data-en-placeholder="Enter code" placeholder="Nhập mã">
+          <button type="submit" class="btn btn-outline btn-sm" data-en="Apply">Áp dụng</button>
+        </div>
+        <p class="promo-msg" id="promo-msg" role="status"></p>
+      </form>
+
+      <fieldset class="ship-estimate">
+        <legend data-en="Shipping estimate">Ước tính phí giao hàng</legend>
+        <div class="ship-options" id="ship-options"></div>
+      </fieldset>
+
       <div class="summary-row"><span data-i18n="subtotal">Tạm tính</span><span id="sum-subtotal"></span></div>
-      <div class="summary-row muted"><span data-i18n="shippingFee">Phí giao hàng</span><span data-i18n="shipLater">Tính ở bước thanh toán</span></div>
+      <div class="summary-row discount" id="row-discount" hidden><span><span data-en="Discount">Giảm giá</span> <span id="discount-code"></span></span><span id="sum-discount"></span></div>
+      <div class="summary-row"><span data-i18n="shippingFee">Phí giao hàng</span><span id="sum-shipping"></span></div>
+      <div class="summary-row"><span id="tax-label">Thuế</span><span id="sum-tax"></span></div>
+      <div class="summary-row total"><span data-i18n="total">Tổng cộng</span><span id="sum-total"></span></div>
       <a class="btn btn-primary btn-block" href="checkout.html" data-i18n="checkout">Thanh toán</a>
       <p class="summary-help">(669) 292-7189 · Houston, Texas</p>
     </aside>

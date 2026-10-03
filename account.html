@@ -3,42 +3,78 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tài khoản — Style by BaoAnh Closet</title>
+<title>Tài khoản — Style by BaoAnh</title>
 <link rel="icon" href="images/logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Great+Vibes&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/flow.css">
 </head>
 <body>
 
+<div class="topbar">
+  <span class="long" data-i18n="topbar">Chăm sóc khách hàng · Customer service: (669) 292-7189</span>
+  <span class="short">(669) 292-7189 · Houston, TX</span>
+  <span class="sep long" aria-hidden="true">|</span>
+  <span class="long">Houston, Texas</span>
+</div>
+
 <header class="site-header">
-  <div class="header-inner simple">
-    <a class="back-link" href="index.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
-      <span class="label" data-i18n="home">Trang chủ</span>
-    </a>
+  <div class="header-inner">
+    <nav class="main-nav" aria-label="Danh mục">
+      <a href="shop.html?sort=new" data-i18n="navNew">Mới về</a>
+      <a href="shop.html" data-i18n="navShop">Shop</a>
+      <a href="index.html#live"><span class="live-dot"></span><span data-i18n="navLive">Live</span></a>
+      <a href="shop.html" data-i18n="navBeauty">Beauty</a>
+      <a href="shop.html?sale=1" class="sale" data-i18n="navSale">Sale</a>
+    </nav>
+    <button class="icon-btn menu-toggle" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+
     <a class="logo" href="index.html">
-      <span class="logo-row"><span class="script">Style</span><span class="by">by</span><span class="name">BaoAnh</span></span>
-      <span class="closet">CLOSET</span>
+      <span class="logo-row">
+        <span class="script">Style</span>
+        <span class="by">by</span>
+        <span class="name">BaoAnh</span>
+      </span>
     </a>
+
     <div class="header-actions">
       <div class="lang-switch" role="group" aria-label="Ngôn ngữ / Language">
         <button data-lang="vi" aria-pressed="true">VI</button>
         <button data-lang="en" aria-pressed="false">EN</button>
       </div>
+      <button class="icon-btn hide-sm" aria-label="Tìm kiếm / Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      </button>
+      <a class="icon-btn hide-sm" href="account.html" data-account-link aria-label="Tài khoản / Account">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
+      </a>
+      <a class="icon-btn hide-sm" href="account.html#wishlist" aria-label="Yêu thích / Wishlist">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+        <span class="count" data-count="fav">0</span>
+      </a>
       <a class="icon-btn" href="cart.html" aria-label="Giỏ hàng / Bag">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
         <span class="count" data-count="bag">0</span>
       </a>
     </div>
   </div>
+  <nav id="mobile-nav" class="mobile-nav" aria-label="Menu">
+    <a href="shop.html?sort=new" data-i18n="navNew">Mới về</a>
+    <a href="shop.html" data-i18n="navShop">Shop</a>
+    <a href="index.html#live"><span class="live-dot"></span><span data-i18n="navLive">Live</span></a>
+    <a href="shop.html" data-i18n="navBeauty">Beauty</a>
+    <a href="shop.html?sale=1" class="sale" data-i18n="navSale">Sale</a>
+    <a href="account.html" data-account-link data-i18n="account">Tài khoản</a>
+  </nav>
 </header>
 
-<main class="container auth-page">
-  <div class="auth-card">
+<main class="container account-page">
+  <div class="auth-card" id="auth-card" hidden>
     <p class="auth-notice" id="not-configured" data-i18n="notConfigured" hidden></p>
-
     <!-- Sign in -->
     <section id="view-signin" class="auth-view">
       <div class="script auth-script">Style</div>
@@ -109,22 +145,176 @@
       <p class="auth-switch"><button type="button" class="link-btn" data-go="signin" data-i18n="backToSignIn">← Quay lại đăng nhập</button></p>
     </section>
 
-    <!-- Signed in -->
-    <section id="view-account" class="auth-view" hidden>
+  </div>
+
+  <!-- ===== Dashboard ===== -->
+  <div class="dash" id="dash" hidden>
+    <p class="demo-banner" id="demo-banner" hidden data-en="Demo mode: data is stored only in this browser. Connect Firebase to go live.">Chế độ demo: dữ liệu chỉ lưu trên trình duyệt này. Kết nối Firebase để chạy thật.</p>
+    <div class="dash-head">
       <div class="avatar" id="acc-avatar" aria-hidden="true"></div>
-      <h1 class="auth-title"><span data-i18n="hello">Xin chào</span>, <span id="acc-name"></span></h1>
-      <p class="muted" id="acc-email"></p>
-      <p class="form-ok" id="acc-msg" role="status" hidden></p>
-      <div class="acc-actions">
-        <a class="btn btn-primary btn-block" href="index.html#new" data-i18n="shopNowShort">Mua sắm ngay</a>
-        <button type="button" class="btn btn-outline btn-block" id="btn-changepw" data-i18n="changePw">Đổi mật khẩu</button>
+      <div>
+        <h1 class="dash-title"><span data-i18n="hello">Xin chào</span>, <span id="acc-name"></span></h1>
+        <p class="muted" id="acc-email"></p>
+      </div>
+    </div>
+
+    <nav class="dash-tabs" aria-label="Tài khoản">
+      <a href="#orders" data-tab="orders" data-en="Orders">Đơn hàng</a>
+      <a href="#tracking" data-tab="tracking" data-en="Tracking">Theo dõi</a>
+      <a href="#wishlist" data-tab="wishlist"><span data-en="Wishlist">Yêu thích</span> <span class="tab-n" data-count="fav"></span></a>
+      <a href="#addresses" data-tab="addresses" data-en="Addresses">Địa chỉ</a>
+      <a href="#profile" data-tab="profile" data-en="Profile">Hồ sơ</a>
+    </nav>
+
+    <section class="dash-panel" id="tab-orders">
+      <div id="orders-list"></div>
+      <div id="order-detail" hidden></div>
+    </section>
+
+    <section class="dash-panel" id="tab-tracking" hidden>
+      <div id="tracking-list"></div>
+    </section>
+
+    <section class="dash-panel" id="tab-wishlist" hidden>
+      <div class="product-grid wish-grid" id="wish-grid"></div>
+      <div class="empty" id="wish-empty" hidden>
+        <p data-en="Tap the heart on any piece to save it here.">Bấm hình trái tim trên sản phẩm để lưu vào đây.</p>
+        <a class="btn btn-primary" href="shop.html" data-en="Browse the shop">Xem cửa hàng</a>
+      </div>
+    </section>
+
+    <section class="dash-panel" id="tab-addresses" hidden>
+      <ul class="address-list" id="address-list"></ul>
+      <button type="button" class="btn btn-outline" id="add-address" data-en="+ Add address">+ Thêm địa chỉ</button>
+      <form class="address-form panel-box" id="address-form" hidden novalidate>
+        <h2 class="panel-title" id="address-form-title" data-en="New address">Địa chỉ mới</h2>
+        <div class="field-row">
+          <div class="field"><label for="ad-label" data-en="Label (e.g. Home, Work)">Tên gợi nhớ (vd: Nhà, Công ty)</label><input id="ad-label"></div>
+          <div class="field"><label for="ad-name" data-i18n="fullName">Họ và tên</label><input id="ad-name" autocomplete="name" required><span class="err"></span></div>
+        </div>
+        <div class="field"><label for="ad-phone" data-i18n="phone">Số điện thoại</label><input id="ad-phone" type="tel" autocomplete="tel" required><span class="err"></span></div>
+        <div class="field"><label for="ad-address" data-i18n="address">Địa chỉ</label><input id="ad-address" autocomplete="street-address" required><span class="err"></span></div>
+        <div class="field-row three">
+          <div class="field"><label for="ad-city" data-i18n="city">Thành phố</label><input id="ad-city" autocomplete="address-level2" required><span class="err"></span></div>
+          <div class="field"><label for="ad-state" data-i18n="stateL">Tiểu bang</label><input id="ad-state" autocomplete="address-level1" value="TX" required><span class="err"></span></div>
+          <div class="field"><label for="ad-zip" data-i18n="zip">ZIP code</label><input id="ad-zip" autocomplete="postal-code" inputmode="numeric" required><span class="err"></span></div>
+        </div>
+        <label class="check-line"><input type="checkbox" id="ad-default"> <span data-en="Use as my default address">Đặt làm địa chỉ mặc định</span></label>
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" id="address-cancel" data-en="Cancel">Hủy</button>
+          <button type="submit" class="btn btn-primary" data-en="Save address">Lưu địa chỉ</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="dash-panel" id="tab-profile" hidden>
+      <form class="panel-box profile-form" id="profile-form" novalidate>
+        <h2 class="panel-title" data-en="Profile">Hồ sơ</h2>
+        <div class="field"><label for="pf-name" data-i18n="fullName">Họ và tên</label><input id="pf-name" autocomplete="name"></div>
+        <div class="field"><label for="pf-phone" data-i18n="phone">Số điện thoại</label><input id="pf-phone" type="tel" autocomplete="tel"><span class="err"></span></div>
+        <div class="field"><label for="pf-email" data-i18n="emailL">Email</label><input id="pf-email" type="email" disabled></div>
+        <p class="form-ok" id="profile-msg" role="status" hidden></p>
+        <button type="submit" class="btn btn-primary" data-en="Save">Lưu</button>
+      </form>
+      <div class="panel-box profile-actions">
+        <button type="button" class="btn btn-outline" id="btn-changepw" data-i18n="changePw">Đổi mật khẩu</button>
+        <p class="form-ok" id="acc-msg" role="status" hidden></p>
         <button type="button" class="link-btn" id="btn-signout" data-i18n="signOut">Đăng xuất</button>
       </div>
     </section>
   </div>
 </main>
 
+<!-- Review dialog -->
+<dialog class="sheet" id="dlg-review" aria-labelledby="review-title">
+  <div class="sheet-head">
+    <h2 id="review-title" data-en="Write a review">Viết đánh giá</h2>
+    <button type="button" class="icon-btn" data-close aria-label="Đóng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <form id="review-form" novalidate>
+    <p class="review-product" id="review-product"></p>
+    <fieldset class="star-input">
+      <legend data-en="Your rating">Bạn chấm mấy sao?</legend>
+      <div class="star-row" id="star-row"></div>
+    </fieldset>
+    <div class="field">
+      <label for="rv-text" data-en="Your review">Nhận xét của bạn</label>
+      <textarea id="rv-text" rows="4" maxlength="1500" data-en-placeholder="Fit, fabric, how you wore it…" placeholder="Form, chất vải, bạn mặc đi đâu…"></textarea>
+    </div>
+    <div class="field">
+      <label for="rv-name" data-en="Name shown">Tên hiển thị</label>
+      <input id="rv-name" maxlength="40">
+    </div>
+    <p class="form-error" role="alert"></p>
+    <button type="submit" class="btn btn-primary btn-block" data-en="Post review">Gửi đánh giá</button>
+  </form>
+</dialog>
+
+<!-- Return / exchange dialog -->
+<dialog class="sheet" id="dlg-return" aria-labelledby="return-title">
+  <div class="sheet-head">
+    <h2 id="return-title" data-en="Return or exchange">Đổi / trả hàng</h2>
+    <button type="button" class="icon-btn" data-close aria-label="Đóng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <form id="return-form" novalidate>
+    <p class="muted" id="return-policy"></p>
+    <fieldset>
+      <legend data-en="What would you like to do?">Bạn muốn</legend>
+      <div class="seg type-seg" role="group">
+        <button type="button" data-rtype="exchange" aria-pressed="true" data-en="Exchange">Đổi hàng</button>
+        <button type="button" data-rtype="return" aria-pressed="false" data-en="Return">Trả hàng</button>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend data-en="Which pieces?">Món nào?</legend>
+      <div class="return-items" id="return-items"></div>
+    </fieldset>
+    <div class="field">
+      <label for="rt-reason" data-en="Reason">Lý do</label>
+      <select id="rt-reason" class="select"></select>
+    </div>
+    <div class="field">
+      <label for="rt-note" data-en="Anything else? (optional)">Ghi chú thêm (không bắt buộc)</label>
+      <textarea id="rt-note" rows="3" maxlength="1000"></textarea>
+    </div>
+    <p class="form-error" role="alert"></p>
+    <button type="submit" class="btn btn-primary btn-block" data-en="Send request">Gửi yêu cầu</button>
+  </form>
+</dialog>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="footer-brand"><span class="script">Style</span><span class="name">by BaoAnh</span></div>
+        <div>Women's Fashion · Beauty · Lifestyle<br><span data-i18n="tagline">Thời trang đẹp – Phong cách chất – Tự tin tỏa sáng</span></div>
+      </div>
+      <div class="footer-col">
+        <h3 data-i18n="fShop">Shop</h3>
+        <a href="shop.html?sort=new" data-i18n="fNew">Mới về</a>
+        <a href="shop.html?cat=dam" data-i18n="fDresses">Đầm</a>
+        <a href="shop.html?occasion=cong-so" data-i18n="fWork">Công sở</a>
+        <a href="shop.html" data-i18n="fBeauty">Beauty</a>
+      </div>
+      <div class="footer-col">
+        <h3 data-i18n="help">Hỗ trợ</h3>
+        <a href="product.html#size-guide" data-i18n="sizeGuide">Hướng dẫn chọn size</a>
+        <a href="returns.html#shipping" data-i18n="shipping">Giao hàng</a>
+        <a href="returns.html" data-i18n="returns">Đổi trả</a>
+      </div>
+      <div class="footer-col">
+        <h3 data-i18n="contact">Liên hệ</h3>
+        <a class="phone" href="tel:+16692927189">(669) 292-7189</a>
+        <span>Houston, Texas</span>
+        <a href="https://www.facebook.com/profile.php?id=61550107277200" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://m.me/61550107277200" target="_blank" rel="noopener">Messenger</a>
+      </div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 Style by BaoAnh</span><span>Simple · Elegant · Effortless</span></div>
+  </div>
+</footer>
+
 <script src="js/main.js"></script>
+<script type="module" src="js/auth.js"></script>
 <script type="module" src="js/account.js"></script>
 </body>
 </html>

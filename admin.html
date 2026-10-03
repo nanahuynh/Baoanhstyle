@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Quản trị — Style by BaoAnh Closet</title>
+<title>Quản trị — Style by BaoAnh</title>
 <link rel="icon" href="images/logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -68,6 +68,7 @@
     <button data-tab="overview" aria-current="page">Tổng quan</button>
     <button data-tab="customers">Khách hàng & đơn <span class="tab-badge" id="badge-new" hidden></span></button>
     <button data-tab="inventory">Kho hàng <span class="tab-badge warn" id="badge-low" hidden></span></button>
+    <button data-tab="returns">Đổi / trả <span class="tab-badge" id="badge-ret" hidden></span></button>
     <button data-tab="ledger">Vốn & chi phí</button>
   </nav>
 
@@ -121,6 +122,13 @@
     </div>
     <p class="admin-note">Khi bạn chuyển một đơn sang <b>Đã xác nhận</b>, kho tự trừ theo đúng mẫu, màu và size. Hủy đơn thì kho tự cộng lại.</p>
     <div class="table-wrap"><table class="admin-table" id="inv-table"></table></div>
+  </section>
+
+  <!-- Returns -->
+  <section class="admin-panel" id="tab-returns" hidden>
+    <h1 class="admin-h1">Yêu cầu đổi / trả</h1>
+    <p class="admin-note">Khách gửi yêu cầu từ Tài khoản → Đơn hàng sau khi đơn ở trạng thái <b>Đã giao</b>. Đổi trạng thái và lời nhắn ở đây, khách sẽ thấy ngay trong tài khoản của họ.</p>
+    <div id="returns-view"></div>
   </section>
 
   <!-- Ledger -->

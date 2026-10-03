@@ -3,36 +3,58 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chi tiết sản phẩm — Style by BaoAnh Closet</title>
+<title>Sản phẩm — Style by BaoAnh</title>
 <link rel="icon" href="images/logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Great+Vibes&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/flow.css">
 </head>
 <body>
 
+<div class="topbar">
+  <span class="long" data-i18n="topbar">Chăm sóc khách hàng · Customer service: (669) 292-7189</span>
+  <span class="short">(669) 292-7189 · Houston, TX</span>
+  <span class="sep long" aria-hidden="true">|</span>
+  <span class="long">Houston, Texas</span>
+</div>
+
 <header class="site-header">
-  <div class="header-inner simple">
-    <a class="back-link" href="index.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
-      <span class="label" data-i18n="home">Trang chủ</span>
-    </a>
+  <div class="header-inner">
+    <nav class="main-nav" aria-label="Danh mục">
+      <a href="shop.html?sort=new" data-i18n="navNew">Mới về</a>
+      <a href="shop.html" data-i18n="navShop">Shop</a>
+      <a href="index.html#live"><span class="live-dot"></span><span data-i18n="navLive">Live</span></a>
+      <a href="shop.html" data-i18n="navBeauty">Beauty</a>
+      <a href="shop.html?sale=1" class="sale" data-i18n="navSale">Sale</a>
+    </nav>
+    <button class="icon-btn menu-toggle" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+
     <a class="logo" href="index.html">
       <span class="logo-row">
         <span class="script">Style</span>
         <span class="by">by</span>
         <span class="name">BaoAnh</span>
       </span>
-      <span class="closet">CLOSET</span>
     </a>
+
     <div class="header-actions">
       <div class="lang-switch" role="group" aria-label="Ngôn ngữ / Language">
         <button data-lang="vi" aria-pressed="true">VI</button>
         <button data-lang="en" aria-pressed="false">EN</button>
       </div>
-      <a class="icon-btn" href="account.html" data-account-link aria-label="Tài khoản / Account">
+      <button class="icon-btn hide-sm" aria-label="Tìm kiếm / Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      </button>
+      <a class="icon-btn hide-sm" href="account.html" data-account-link aria-label="Tài khoản / Account">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
+      </a>
+      <a class="icon-btn hide-sm" href="account.html#wishlist" aria-label="Yêu thích / Wishlist">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+        <span class="count" data-count="fav">0</span>
       </a>
       <a class="icon-btn" href="cart.html" aria-label="Giỏ hàng / Bag">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
@@ -40,20 +62,30 @@
       </a>
     </div>
   </div>
+  <nav id="mobile-nav" class="mobile-nav" aria-label="Menu">
+    <a href="shop.html?sort=new" data-i18n="navNew">Mới về</a>
+    <a href="shop.html" data-i18n="navShop">Shop</a>
+    <a href="index.html#live"><span class="live-dot"></span><span data-i18n="navLive">Live</span></a>
+    <a href="shop.html" data-i18n="navBeauty">Beauty</a>
+    <a href="shop.html?sale=1" class="sale" data-i18n="navSale">Sale</a>
+    <a href="account.html" data-account-link data-i18n="account">Tài khoản</a>
+  </nav>
 </header>
 
 <main class="container">
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <a href="index.html" data-i18n="home">Trang chủ</a> /
-    <a href="index.html#shop" data-i18n="dresses">Đầm</a> /
+    <a href="shop.html">Shop</a> /
+    <a href="shop.html" id="crumb-cat"></a> /
     <span aria-current="page" id="crumb-name"></span>
   </nav>
 
   <div class="pdp">
     <div class="gallery">
       <div class="thumbs" id="thumbs"></div>
-      <div class="main-image">
+      <div class="main-image" id="main-media">
         <img id="main-img" src="" alt="">
+        <video id="main-video" controls playsinline preload="metadata" hidden></video>
         <span class="badge" id="main-badge"></span>
       </div>
     </div>
@@ -62,18 +94,28 @@
       <div>
         <h1 id="p-name"></h1>
         <div class="muted" id="p-sub"></div>
-        <span class="price" id="p-price"></span>
+        <a href="#reviews" class="rating-link" id="rating-link"></a>
+        <div class="price-row">
+          <span class="price" id="p-price"></span>
+          <s class="old-price" id="p-old"></s>
+        </div>
       </div>
-      <p class="desc" data-i18n="desc">[Mô tả sản phẩm: chất liệu, form dáng, dịp mặc.]</p>
 
       <div>
-        <div class="opt-label"><div><span data-i18n="color" style="font-weight:600;color:var(--ink)">Màu</span>: <span id="color-name"></span></div></div>
+        <div class="opt-label"><div><strong data-i18n="color">Màu</strong>: <span class="muted" id="color-name"></span></div></div>
         <div class="swatches" id="swatches"></div>
       </div>
 
       <div>
-        <div class="opt-label"><strong data-i18n="size">Size</strong><a href="#size-guide" data-i18n="sizeGuide">Hướng dẫn chọn size</a></div>
+        <div class="opt-label">
+          <div><strong data-i18n="size">Size</strong>: <span class="muted" id="size-name"></span></div>
+          <div class="size-links">
+            <button type="button" class="link-btn small" id="open-guide" data-en="Size guide">Bảng size</button>
+            <button type="button" class="link-btn small" id="open-fit" data-en="Find my size">Tìm size của tôi</button>
+          </div>
+        </div>
         <div class="sizes" id="sizes"></div>
+        <p class="size-hint" id="size-hint" role="status"></p>
       </div>
 
       <div class="buy-row">
@@ -83,30 +125,116 @@
           <button id="qty-inc" aria-label="Tăng">+</button>
         </div>
         <button class="btn btn-primary" id="add-btn" data-i18n="addToBag">Thêm vào giỏ</button>
+        <button class="fav fav-lg" id="pdp-fav" aria-pressed="false" aria-label="Yêu thích"></button>
       </div>
+      <p class="form-error" id="add-error" role="alert"></p>
       <div id="added-msg" class="added-msg" role="status" hidden>
         <a class="btn btn-primary" href="cart.html" data-i18n="viewCart">Xem giỏ hàng →</a>
       </div>
       <a class="btn btn-outline" href="tel:+16692927189" data-i18n="call">Gọi tư vấn (669) 292-7189</a>
       <a class="btn btn-outline" href="https://m.me/61550107277200" target="_blank" rel="noopener" data-i18n="messenger">Nhắn tin Messenger</a>
 
-      <div class="accordion">
-        <details open><summary data-i18n="acc1t">Chất liệu &amp; bảo quản</summary><p data-i18n="acc1b"></p></details>
-        <details id="size-guide"><summary data-i18n="acc2t">Số đo &amp; form</summary><p data-i18n="acc2b"></p></details>
-        <details><summary data-i18n="acc3t">Giao hàng &amp; đổi trả</summary><p data-i18n="acc3b"></p></details>
+      <div class="accordion" id="details">
+        <details open><summary data-en="Description">Mô tả</summary><p id="d-description"></p></details>
+        <details><summary data-en="Material">Chất liệu</summary><p id="d-material"></p></details>
+        <details><summary data-en="Fit">Form dáng</summary><p id="d-fit"></p></details>
+        <details><summary data-en="Care">Bảo quản</summary><p id="d-care"></p></details>
+        <details id="delivery-returns"><summary data-en="Delivery & returns">Giao hàng & đổi trả</summary>
+          <div class="acc-body">
+            <p id="d-delivery"></p>
+            <p id="d-returns"></p>
+            <a href="returns.html" data-en="Full delivery & returns policy →">Xem chính sách giao hàng & đổi trả →</a>
+          </div>
+        </details>
       </div>
     </div>
   </div>
+
+  <section class="reviews" id="reviews" aria-labelledby="reviews-title">
+    <div class="reviews-head">
+      <h2 class="display" id="reviews-title" data-en="Reviews">Đánh giá</h2>
+      <p class="muted reviews-how" data-en="Reviews come from customers who received their order. Write one from My account → Orders.">Đánh giá đến từ khách đã nhận hàng. Viết đánh giá trong Tài khoản → Đơn hàng.</p>
+    </div>
+    <div class="reviews-body">
+      <div class="reviews-summary" id="reviews-summary"></div>
+      <ul class="review-list" id="review-list"></ul>
+    </div>
+  </section>
 </main>
 
+<!-- Size guide -->
+<dialog class="sheet" id="dlg-guide" aria-labelledby="guide-title">
+  <div class="sheet-head">
+    <h2 id="guide-title" data-en="Size guide">Bảng size</h2>
+    <button type="button" class="icon-btn" data-close aria-label="Đóng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <p class="muted" data-en="Body measurements. Switch between cm and inches below. Between two sizes? Pick the larger for a relaxed fit.">Số đo cơ thể, đổi cm / inch ở bên dưới. Nằm giữa hai size thì chọn size lớn hơn để mặc thoải mái.</p>
+  <div class="seg unit-seg" role="group" aria-label="Đơn vị"><button type="button" data-unit="in" aria-pressed="true">inch</button><button type="button" data-unit="cm" aria-pressed="false">cm</button></div>
+  <div class="table-scroll"><table class="size-table" id="size-table"></table></div>
+  <h3 data-en="How to measure">Cách đo</h3>
+  <ul class="measure-list">
+    <li><b data-en="Bust">Ngực</b>: <span data-en="around the fullest part of your chest">vòng quanh chỗ đầy nhất của ngực</span></li>
+    <li><b data-en="Waist">Eo</b>: <span data-en="around the narrowest part of your waist">vòng quanh chỗ nhỏ nhất của eo</span></li>
+    <li><b data-en="Hips">Hông</b>: <span data-en="around the fullest part of your hips">vòng quanh chỗ đầy nhất của hông</span></li>
+  </ul>
+  <button type="button" class="btn btn-outline btn-block" id="guide-to-fit" data-en="Find my size">Tìm size của tôi</button>
+</dialog>
+
+<!-- Find my size -->
+<dialog class="sheet" id="dlg-fit" aria-labelledby="fit-title">
+  <div class="sheet-head">
+    <h2 id="fit-title" data-en="Find my size">Tìm size của tôi</h2>
+    <button type="button" class="icon-btn" data-close aria-label="Đóng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <form id="fit-form" novalidate>
+    <p class="muted" data-en="Enter your measurements. Any one works; more gives a better match.">Nhập số đo của bạn. Chỉ cần một số đo, càng đủ càng chính xác.</p>
+    <div class="seg unit-seg" role="group" aria-label="Đơn vị">
+      <button type="button" data-unit="in" aria-pressed="true">inch</button>
+      <button type="button" data-unit="cm" aria-pressed="false">cm</button>
+    </div>
+    <div class="fit-fields">
+      <div class="field"><label for="fit-bust" data-en="Bust">Ngực</label><input id="fit-bust" type="number" inputmode="decimal" min="0" step="0.5"></div>
+      <div class="field"><label for="fit-waist" data-en="Waist">Eo</label><input id="fit-waist" type="number" inputmode="decimal" min="0" step="0.5"></div>
+      <div class="field"><label for="fit-hips" data-en="Hips">Hông</label><input id="fit-hips" type="number" inputmode="decimal" min="0" step="0.5"></div>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block" data-en="Find my size">Tìm size</button>
+  </form>
+  <div class="fit-result" id="fit-result" role="status" hidden></div>
+</dialog>
 <footer class="site-footer">
   <div class="container">
-    <div class="footer-bottom" style="margin-top:0;border-top:0;padding-top:0"><span>© 2026 Style by BaoAnh Closet · <a href="tel:+16692927189">(669) 292-7189</a> · Houston, Texas · <a href="https://www.facebook.com/profile.php?id=61550107277200" target="_blank" rel="noopener">Facebook</a> · <a href="https://m.me/61550107277200" target="_blank" rel="noopener">Messenger</a></span><span>Simple · Elegant · Effortless</span></div>
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="footer-brand"><span class="script">Style</span><span class="name">by BaoAnh</span></div>
+        <div>Women's Fashion · Beauty · Lifestyle<br><span data-i18n="tagline">Thời trang đẹp – Phong cách chất – Tự tin tỏa sáng</span></div>
+      </div>
+      <div class="footer-col">
+        <h3 data-i18n="fShop">Shop</h3>
+        <a href="shop.html?sort=new" data-i18n="fNew">Mới về</a>
+        <a href="shop.html?cat=dam" data-i18n="fDresses">Đầm</a>
+        <a href="shop.html?occasion=cong-so" data-i18n="fWork">Công sở</a>
+        <a href="shop.html" data-i18n="fBeauty">Beauty</a>
+      </div>
+      <div class="footer-col">
+        <h3 data-i18n="help">Hỗ trợ</h3>
+        <a href="product.html#size-guide" data-i18n="sizeGuide">Hướng dẫn chọn size</a>
+        <a href="returns.html#shipping" data-i18n="shipping">Giao hàng</a>
+        <a href="returns.html" data-i18n="returns">Đổi trả</a>
+      </div>
+      <div class="footer-col">
+        <h3 data-i18n="contact">Liên hệ</h3>
+        <a class="phone" href="tel:+16692927189">(669) 292-7189</a>
+        <span>Houston, Texas</span>
+        <a href="https://www.facebook.com/profile.php?id=61550107277200" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://m.me/61550107277200" target="_blank" rel="noopener">Messenger</a>
+      </div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 Style by BaoAnh</span><span>Simple · Elegant · Effortless</span></div>
   </div>
 </footer>
 
 <script src="js/main.js"></script>
 <script type="module" src="js/auth.js"></script>
-<script src="js/product.js"></script>
+<script type="module" src="js/product.js"></script>
 </body>
 </html>
