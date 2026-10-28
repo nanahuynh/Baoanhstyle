@@ -75,7 +75,9 @@ switch ($action) {
     $pw = (string)($in['password'] ?? '');
     foreach (config()['admins'] ?? [] as $aEmail => $aPw) {
       if (strtolower($aEmail) === $email) {
-        if ($pw !== '' && hash_equals((string)$aPw, $pw)) { sign_in_as('admin:' . $email); out(['user' => public_user(me())]); }
+        // the sample password (public on GitHub) and short passwords never work
+        $usable = strlen((string)$aPw) >= 8 && $aPw !== 'doi-mat-khau-nay';
+        if ($usable && hash_equals((string)$aPw, $pw)) { sign_in_as('admin:' . $email); out(['user' => public_user(me())]); }
         throttle_fail();
         fail('auth/invalid-credential');
       }

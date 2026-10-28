@@ -4,7 +4,8 @@
 // 2. KHÔNG đưa config.php lên GitHub (đã có trong .gitignore) vì chứa mật khẩu.
 return [
   // Tài khoản vào trang quản trị (admin.html): email => mật khẩu.
-  // Đặt mật khẩu dài, khó đoán. Có thể thêm nhiều dòng.
+  // Đặt mật khẩu ít nhất 8 ký tự, khó đoán. Mật khẩu mẫu bên dưới sẽ KHÔNG đăng nhập được.
+  // Có thể thêm nhiều dòng.
   'admins' => [
     'email-cua-shop@gmail.com' => 'doi-mat-khau-nay',
   ],
