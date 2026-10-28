@@ -57,11 +57,16 @@ function fail(string $code, string $message = '', int $http = 400): never {
 function denied(): never { fail('permission-denied', 'Không có quyền.', 403); }
 
 // ---------- session / current user ----------
+// Behind a proxy (Caddy) PHP itself sees plain http; the proxy says what the visitor used.
+function is_https(): bool {
+  return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || strtolower($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+}
 function start_session(): void {
   session_name('baoanh_sid');
   session_set_cookie_params([
     'lifetime' => 60 * 60 * 24 * 30, 'path' => '/', 'httponly' => true, 'samesite' => 'Lax',
-    'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+    'secure' => is_https(),
   ]);
   ini_set('session.gc_maxlifetime', (string)(60 * 60 * 24 * 30));
   session_start();

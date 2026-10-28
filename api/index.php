@@ -130,9 +130,10 @@ switch ($action) {
     if ($uid) {
       $token = bin2hex(random_bytes(24));
       db()->prepare('INSERT INTO resets (token, uid, expires) VALUES (?, ?, ?)')->execute([hash('sha256', $token), $uid, time() + 3600]);
-      $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-      $link = $scheme . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . '/reset.php?t=' . $token;
-      $from = config()['mail_from'] ?? ('no-reply@' . $_SERVER['HTTP_HOST']);
+      // fixed site address: never build the link from the request's Host header (it can be forged)
+      $site = rtrim(config()['site_url'] ?? 'https://www.stylebybaoanh.com', '/');
+      $link = $site . '/api/reset.php?t=' . $token;
+      $from = config()['mail_from'] ?? 'no-reply@stylebybaoanh.com';
       $subject = '=?UTF-8?B?' . base64_encode('Đặt lại mật khẩu – Style by BaoAnh Closet') . '?=';
       $body = "Chào bạn,\n\nBấm link dưới đây để đặt mật khẩu mới (link dùng được trong 1 giờ):\n$link\n\n"
         . "Nếu bạn không yêu cầu, hãy bỏ qua email này.\n\nStyle by BaoAnh Closet";

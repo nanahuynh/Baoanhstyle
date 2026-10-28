@@ -25,6 +25,9 @@ return [
     'dsn' => 'sqlite:' . __DIR__ . '/data/shop.sqlite',
   ],
 
+  // Địa chỉ web (dùng trong link đặt lại mật khẩu gửi qua email)
+  'site_url' => 'https://www.stylebybaoanh.com',
+
   // Email gửi đi (link đặt lại mật khẩu). Nên dùng email theo tên miền, ví dụ no-reply@stylebybaoanh.com
   'mail_from' => 'no-reply@stylebybaoanh.com',
 ];
