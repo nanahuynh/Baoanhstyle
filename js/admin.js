@@ -1,13 +1,12 @@
-// Admin: customers & orders, inventory, capital & expenses (Firestore)
+// Admin: customers & orders, inventory, capital & expenses (our PHP server, see api/)
 import {
   getFirestore, collection, doc, onSnapshot, addDoc, updateDoc, deleteDoc,
   query, orderBy, runTransaction, serverTimestamp
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+} from './server/db.js';
 import {
   signInWithEmailAndPassword, signOut, sendEmailVerification, onAuthStateChanged
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+} from './server/auth.js';
 import { app, auth, configured } from './auth.js';
-import { ADMIN_EMAILS } from './firebase-config.js';
 
 const $ = id => document.getElementById(id);
 const db = configured ? getFirestore(app) : null;
@@ -76,9 +75,6 @@ function showGate(which, msg) {
   if (msg) $('denied-msg').textContent = msg;
 }
 
-function isAdminEmail(email) {
-  return ADMIN_EMAILS.map(e => e.toLowerCase()).includes(String(email).toLowerCase());
-}
 
 function gate(user) {
   unsub.splice(0).forEach(f => f());
@@ -86,7 +82,7 @@ function gate(user) {
   if (user) $('admin-email').textContent = user.email;
   if (!configured) return showGate('config');
   if (!user) return showGate('login');
-  if (!isAdminEmail(user.email)) return showGate('denied', 'Tài khoản ' + user.email + ' không phải tài khoản quản trị. Thêm email này vào ADMIN_EMAILS và firestore.rules nếu đây là email của shop.');
+  if (!user.admin) return showGate('denied', 'Tài khoản ' + user.email + ' không phải tài khoản quản trị. Tài khoản quản trị khai báo trong api/config.php.');
   if (!user.emailVerified) return showGate('verify');
   startApp();
 }
@@ -121,7 +117,7 @@ function startApp() {
   $('gate').hidden = true;
   $('app').hidden = false;
   const onErr = err => {
-    if (err.code === 'permission-denied') showGate('denied', 'Firestore từ chối quyền. Kiểm tra email của bạn đã có trong firestore.rules và đã bấm Publish chưa.');
+    if (err.code === 'permission-denied') showGate('denied', 'Server từ chối quyền. Đăng xuất rồi đăng nhập lại bằng tài khoản quản trị trong api/config.php.');
     else toast('Lỗi tải dữ liệu: ' + err.message);
   };
   unsub.push(onSnapshot(query(collection(db, 'orders'), orderBy('createdAt', 'desc')), s => {

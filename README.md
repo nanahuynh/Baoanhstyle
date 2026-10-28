@@ -2,7 +2,7 @@
 
 Website bán hàng thời trang — Houston, TX · (669) 292-7189
 
-HTML/CSS/JavaScript thuần, không cần build. Đăng nhập, đơn hàng, đánh giá, đổi trả và trang quản trị dùng Firebase (Authentication + Firestore). Chưa có Firebase thì web chạy ở chế độ demo (dữ liệu lưu trên trình duyệt).
+HTML/CSS/JavaScript thuần, không cần build. Đăng nhập, đơn hàng, đánh giá, đổi trả, kho hàng và sổ thu chi lưu trên server riêng (PHP + MySQL hoặc SQLite, thư mục `api/`). Chưa đưa lên server (ví dụ đang chạy trên GitHub Pages) thì web chạy ở chế độ demo: dữ liệu chỉ lưu trên trình duyệt của người xem.
 
 ## Flow mua hàng
 
@@ -23,13 +23,26 @@ Home → Shop → Danh mục → Bộ lọc → Sản phẩm → Giỏ hàng →
 ## Chạy trên máy
 
 ```bash
-ruby -run -e httpd . -p 5173
+php -S localhost:5173
 ```
 
-Mở http://localhost:5173
+Mở http://localhost:5173 (chế độ demo). Muốn thử cả server: tạo `api/config.php` như bên dưới và đổi `API_URL` trong `js/config.js` thành `'api/'`.
+
+## Đưa lên server (hosting có PHP 8.1 trở lên)
+
+1. Upload **toàn bộ** thư mục web lên `public_html` (hoặc thư mục gốc của tên miền).
+2. Trong thư mục `api/`, copy `config.sample.php` thành **`config.php`** rồi sửa:
+   - `admins`: email và mật khẩu đăng nhập trang quản trị.
+   - `db`: thông tin database MySQL tạo trong cPanel/DirectAdmin, hoặc giữ SQLite (không cần tạo gì).
+   - `mail_from`: email gửi link đặt lại mật khẩu.
+3. Mở `js/config.js`, đổi `API_URL` thành `'api/'`.
+4. Mở `https://tên-miền/admin.html`, đăng nhập bằng email + mật khẩu ở bước 2.
+
+Bảng dữ liệu tự tạo ở lần chạy đầu. `api/config.php` và `api/data/` không được đưa lên GitHub (có trong `.gitignore`).
+Sao lưu: tải file SQLite (hoặc export database MySQL trong phpMyAdmin) định kỳ.
 
 ## Cấu hình
 
 - **Sản phẩm, giá, bảng size, phí ship, thuế, mã giảm giá, chính sách:** đầu file `js/main.js`
-- **Firebase:** `js/firebase-config.js` (config + `ADMIN_EMAILS`)
-- **Quyền database:** dán `firestore.rules` vào Firebase Console → Firestore → Rules
+- **Server:** `js/config.js` (`API_URL`) và `api/config.php` (tài khoản quản trị, database, email)
+- **Quyền dữ liệu:** `api/lib.php` — khách chỉ xem đơn / đổi trả của chính mình; kho hàng và sổ thu chi chỉ tài khoản quản trị xem được.

@@ -1,0 +1,5 @@
+# Chỉ cho mở index.php và reset.php; chặn các file còn lại (config, lib, dữ liệu).
+Options -Indexes
+<FilesMatch "^(config|config\.sample|lib)\.php$|\.(sqlite|db|json|log)$">
+  Require all denied
+</FilesMatch>

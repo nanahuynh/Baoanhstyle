@@ -3,7 +3,7 @@
 import {
   signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile,
   sendPasswordResetEmail, signOut
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+} from './server/auth.js';
 import { auth, configured, authError } from './auth.js';
 import {
   demo, onUser, myOrders, demoAdvance, getProfile, saveProfile, addReview, myReviewIds,
@@ -24,7 +24,7 @@ let openOrder = null;
 let editingAddress = null;
 
 // ======================================================================
-// Sign in / sign up / forgot password (Firebase mode only)
+// Sign in / sign up / forgot password (server mode only)
 // ======================================================================
 const authViews = ['signin', 'signup', 'forgot'];
 function showAuth(view) {

@@ -1,9 +1,9 @@
-// Data layer: Firestore when Firebase is configured, otherwise a local demo (browser storage).
+// Data layer: our PHP server (api/) when js/config.js has API_URL, otherwise a local demo (browser storage).
 // Every page that needs orders / profile / reviews / returns imports from here.
 import {
   getFirestore, collection, doc, addDoc, getDoc, getDocs, setDoc, query, where, serverTimestamp
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+} from './server/db.js';
+import { onAuthStateChanged } from './server/auth.js';
 import { app, auth, configured } from './auth.js';
 
 export const demo = !configured;

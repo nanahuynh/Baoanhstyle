@@ -1,3 +1,8 @@
 .DS_Store
 .claude/
 _test/
+
+# Server: mật khẩu và dữ liệu không đưa lên GitHub
+api/config.php
+api/data/*
+!api/data/.htaccess

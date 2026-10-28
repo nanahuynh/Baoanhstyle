@@ -1,10 +1,9 @@
-// Firebase Authentication — loaded on every page as a module (after main.js)
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { firebaseConfig } from './firebase-config.js';
+// Accounts (our PHP server, see api/) — loaded on every page as a module (after main.js)
+import { getAuth, onAuthStateChanged } from './server/auth.js';
+import { API_URL } from './config.js';
 
-export const configured = !!firebaseConfig.apiKey;
-export const app = configured ? initializeApp(firebaseConfig) : null;
+export const configured = !!API_URL;
+export const app = configured ? {} : null;
 export const auth = configured ? getAuth(app) : null;
 
 Object.assign(I18N.vi, {
@@ -18,7 +17,7 @@ Object.assign(I18N.vi, {
   pwShort: 'Mật khẩu cần ít nhất 8 ký tự.', pwMismatch: 'Hai mật khẩu chưa khớp.',
   signInIntro: 'Đăng nhập để thanh toán nhanh hơn.', signUpIntro: 'Tạo tài khoản để lần sau không phải nhập lại thông tin.',
   memberSince: 'Thành viên từ', shopNowShort: 'Mua sắm ngay', loginToFill: 'Đăng nhập để điền nhanh',
-  notConfigured: 'Chức năng đăng nhập chưa được bật: cần dán cấu hình Firebase vào js/firebase-config.js.',
+  notConfigured: 'Chức năng đăng nhập chưa được bật: web cần chạy trên server có PHP (xem README).',
   'auth/invalid-credential': 'Email hoặc mật khẩu không đúng.',
   'auth/wrong-password': 'Email hoặc mật khẩu không đúng.',
   'auth/user-not-found': 'Email hoặc mật khẩu không đúng.',
@@ -40,7 +39,7 @@ Object.assign(I18N.en, {
   pwShort: 'Password must be at least 8 characters.', pwMismatch: 'Passwords do not match.',
   signInIntro: 'Sign in for a faster checkout.', signUpIntro: 'Create an account so you never retype your details.',
   memberSince: 'Member since', shopNowShort: 'Start shopping', loginToFill: 'Sign in to fill this in',
-  notConfigured: 'Sign-in is not switched on yet: paste your Firebase config into js/firebase-config.js.',
+  notConfigured: 'Sign-in is not switched on yet: the site must run on a PHP server (see README).',
   'auth/invalid-credential': 'Wrong email or password.',
   'auth/wrong-password': 'Wrong email or password.',
   'auth/user-not-found': 'Wrong email or password.',
