@@ -1,0 +1,10 @@
+# Trình duyệt luôn hỏi lại server bản mới của trang, CSS và JS (nên cập nhật web là thấy ngay).
+# Ảnh được giữ 7 ngày cho nhanh. Cần bật mod_headers: a2enmod headers
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|js|css)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <FilesMatch "\.(jpg|jpeg|png|webp|gif|svg|mp4)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+</IfModule>
