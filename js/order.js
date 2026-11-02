@@ -40,7 +40,7 @@ function render() {
   $('o-items').innerHTML = o.items.map(i => {
     const p = findProduct(i.id);
     return `<li class="mini-item">
-      <span class="mini-img" style="background:${p ? p.bg : '#f1ddd5'}"><img src="${p ? imageFor(p, i.color) : ''}" alt=""><span class="mini-qty">${i.qty}</span></span>
+      <span class="mini-img" style="background:${p ? p.bg : '#f1ddd5'}"><img src="${p ? imageFor(p, i.color) : ''}" alt=""><span class="mini-qty">${Number(i.qty) || 0}</span></span>
       <span class="mini-info"><span>${escHtml(p ? p[state.lang] : i.product)}</span><span class="muted">${escHtml(colorName(i.color))} · ${escHtml(i.size)}</span></span>
       <span class="mini-price">${typeof i.price === 'number' ? money(i.price * i.qty) : tr('[Giá]', '[Price]')}</span>
     </li>`;

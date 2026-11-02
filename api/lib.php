@@ -32,6 +32,7 @@ function db(): PDO {
     'CREATE TABLE IF NOT EXISTS users (uid VARCHAR(40) PRIMARY KEY, email VARCHAR(190) NOT NULL UNIQUE, pass VARCHAR(255) NOT NULL, name VARCHAR(190) NOT NULL, created VARCHAR(40) NOT NULL)',
     'CREATE TABLE IF NOT EXISTS resets (token VARCHAR(64) PRIMARY KEY, uid VARCHAR(40) NOT NULL, expires INT NOT NULL)',
     'CREATE TABLE IF NOT EXISTS fails (ip VARCHAR(64) NOT NULL, ts INT NOT NULL)',
+    'CREATE TABLE IF NOT EXISTS hits (ip VARCHAR(64) NOT NULL, kind VARCHAR(20) NOT NULL, ts INT NOT NULL)',
   ] as $sql) $pdo->exec($sql);
   return $pdo;
 }
@@ -82,6 +83,7 @@ function me(): ?array {
   if (str_starts_with($uid, 'admin:')) {
     $email = substr($uid, 6);
     if (!is_admin_email($email)) return null;   // removed from config since signing in
+    if (time() - (int)($_SESSION['at'] ?? 0) > 12 * 3600) { $_SESSION = []; return null; }   // admin must sign in again every 12 h
     return ['uid' => $uid, 'email' => $email, 'displayName' => 'Quản trị', 'admin' => true, 'created' => null];
   }
   $st = db()->prepare('SELECT uid, email, name, created FROM users WHERE uid = ?');
@@ -92,7 +94,19 @@ function me(): ?array {
 }
 
 // ---------- login throttling ----------
-function client_ip(): string { return substr($_SERVER['REMOTE_ADDR'] ?? 'unknown', 0, 64); }
+// Behind Caddy every request comes from the proxy's address, so the visitor's IP is the last
+// X-Forwarded-For entry (the one the proxy itself added). Only trusted when the request really
+// comes from a private/proxy address, so nobody can fake it by talking to Apache directly.
+function client_ip(): string {
+  $remote = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+  $private = filter_var($remote, FILTER_VALIDATE_IP) && !filter_var($remote, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+  if ($private && !empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+    $parts = array_map('trim', explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']));
+    $last = end($parts);
+    if (filter_var($last, FILTER_VALIDATE_IP)) return substr($last, 0, 64);
+  }
+  return substr($remote, 0, 64);
+}
 function throttle_check(): void {
   $db = db();
   $db->prepare('DELETE FROM fails WHERE ts < ?')->execute([time() - 900]);
@@ -102,6 +116,15 @@ function throttle_check(): void {
 }
 function throttle_fail(): void {
   db()->prepare('INSERT INTO fails (ip, ts) VALUES (?, ?)')->execute([client_ip(), time()]);
+}
+// At most $max actions of one kind per visitor per hour (stops order spam and similar floods).
+function rate_limit(string $kind, int $max): void {
+  $db = db();
+  $db->prepare('DELETE FROM hits WHERE ts < ?')->execute([time() - 3600]);
+  $st = $db->prepare('SELECT COUNT(*) FROM hits WHERE ip = ? AND kind = ?');
+  $st->execute([client_ip(), $kind]);
+  if ((int)$st->fetchColumn() >= $max) fail('resource-exhausted', 'Bạn thao tác quá nhiều lần. Vui lòng thử lại sau.', 429);
+  $db->prepare('INSERT INTO hits (ip, kind, ts) VALUES (?, ?, ?)')->execute([client_ip(), $kind, time()]);
 }
 
 // ---------- documents ----------
@@ -154,6 +177,38 @@ function apply_update(array $doc, array $patch): array {
   return $doc;
 }
 
+// ---------- cleaning data sent by customers ----------
+// Customers' text ends up on the admin page. Besides escaping it there, the server strips the
+// characters HTML needs (< > " `) and caps sizes, so injected code can never be stored.
+function clean_value(mixed $v, int $depth = 0, int $maxLen = 300): mixed {
+  if ($depth > 4) denied();
+  if (is_string($v)) {
+    $v = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $v) ?? '';
+    $v = strtr($v, ['<' => '‹', '>' => '›', '"' => '”', '`' => '’']);
+    return mb_substr($v, 0, $maxLen);
+  }
+  if (is_int($v) || is_bool($v) || $v === null) return $v;
+  if (is_float($v)) return is_finite($v) ? $v : null;
+  if (is_array($v)) {
+    if (count($v) > 50) denied();
+    $out = [];
+    foreach ($v as $k => $x) {
+      if (is_string($k) && !preg_match('/^[A-Za-z0-9_]{1,40}$/', $k)) denied();
+      $out[$k] = clean_value($x, $depth + 1, in_array($k, ['note', 'text', 'reply'], true) ? 1500 : 300);
+    }
+    return $out;
+  }
+  denied();
+}
+function clean_items(mixed $items): array {
+  if (!is_array($items) || !array_is_list($items) || count($items) < 1 || count($items) > 50) denied();
+  foreach ($items as $i) {
+    if (!is_array($i) || !preg_match('/^[a-z0-9_-]{1,30}$/', (string)($i['id'] ?? ''))) denied();
+    if (!is_int($i['qty'] ?? null) || $i['qty'] < 1 || $i['qty'] > 99) denied();
+  }
+  return $items;
+}
+
 // ---------- access rules (same as the old firestore.rules) ----------
 function delivered_to(?array $user, $orderId): bool {
   if (!$user || !is_string($orderId) || $orderId === '') return false;
@@ -177,16 +232,20 @@ function check_create(?array $user, string $col, string $id, array $d, bool $exi
   $admin = $user && $user['admin'];
   switch ($col) {
     case 'orders':
+      if (!$admin) rate_limit('order', 20);
+      $d = clean_value($d);
       if (($d['status'] ?? null) !== 'new' || ($d['stockApplied'] ?? null) !== false) denied();
-      if (!is_array($d['items'] ?? null) || !array_is_list($d['items']) || count($d['items']) < 1 || count($d['items']) > 50) denied();
+      clean_items($d['items'] ?? null);
+      if (!preg_match('/^BA\d{6}$/', (string)($d['number'] ?? ''))) $d['number'] = 'BA' . substr((string)time(), -6);
       $uid = $d['uid'] ?? null;
       if ($uid !== null && (!$user || $uid !== $user['uid'])) denied();
       $d['createdAt'] = now();
       return $d;
     case 'users':
       if (!$user || $id !== $user['uid']) denied();
-      return $d;
+      return clean_value($d);
     case 'reviews':
+      $d = clean_value($d);
       if (!$user || $exists || ($d['uid'] ?? null) !== $user['uid']) denied();
       if ($id !== ($d['orderId'] ?? '') . '_' . ($d['productId'] ?? '')) denied();
       if (!delivered_to($user, $d['orderId'] ?? null)) denied();
@@ -195,6 +254,8 @@ function check_create(?array $user, string $col, string $id, array $d, bool $exi
       $d['createdAt'] = now();
       return $d;
     case 'returns':
+      $d = clean_value($d);
+      clean_items($d['items'] ?? null);
       if (!$user || ($d['uid'] ?? null) !== $user['uid'] || ($d['status'] ?? null) !== 'requested') denied();
       if (!delivered_to($user, $d['orderId'] ?? null)) denied();
       $d['createdAt'] = now();

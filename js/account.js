@@ -177,7 +177,7 @@ function renderOrders() {
   $('orders-list').innerHTML = `<ul class="order-list">${orders.map(o => `
     <li><a class="order-row" href="#orders/${encodeURIComponent(o.id)}">
       <span class="order-thumbs">${thumbs(o)}</span>
-      <span class="order-main"><b>${escHtml(o.number)}</b><small>${fmtDate(o.createdAt)} · ${o.items.reduce((n, i) => n + i.qty, 0)} ${tr('món', 'items')}</small></span>
+      <span class="order-main"><b>${escHtml(o.number)}</b><small>${fmtDate(o.createdAt)} · ${o.items.reduce((n, i) => n + (Number(i.qty) || 0), 0)} ${tr('món', 'items')}</small></span>
       <span class="pill st-${escHtml(o.status)}">${statusLabel(o.status)}</span>
       <span class="order-sum">${orderTotalText(o)}</span>
     </a></li>`).join('')}</ul>
@@ -214,7 +214,7 @@ function renderOrderDetail(o) {
         <a href="product.html?id=${escHtml(i.id)}" class="detail-img" style="background:${p ? p.bg : ''}"><img src="${p ? imageFor(p, i.color) : ''}" alt=""></a>
         <div class="detail-info">
           <a href="product.html?id=${escHtml(i.id)}" class="line-name">${escHtml(p ? p[state.lang] : i.product)}</a>
-          <span class="muted">${escHtml(colorName(i.color))} · Size ${escHtml(i.size)} · ×${i.qty}</span>
+          <span class="muted">${escHtml(colorName(i.color))} · Size ${escHtml(i.size)} · ×${Number(i.qty) || 0}</span>
           ${delivered ? (reviewed.has(rid)
             ? `<span class="reviewed">✓ ${tr('Đã đánh giá', 'Reviewed')}</span>`
             : `<button type="button" class="btn btn-outline btn-sm" data-review="${escHtml(o.id)}" data-pid="${escHtml(i.id)}" data-size="${escHtml(i.size)}">★ ${tr('Viết đánh giá', 'Write a review')}</button>`) : ''}
@@ -395,7 +395,7 @@ function renderReturnItems() {
   $('return-items').innerHTML = o.items.map((i, idx) => {
     const p = findProduct(i.id);
     return `<div class="return-item">
-      <label class="check-line"><input type="checkbox" data-ri="${idx}" checked> ${escHtml(p ? p[state.lang] : i.product)} · ${escHtml(colorName(i.color))} · ${escHtml(i.size)} ×${i.qty}</label>
+      <label class="check-line"><input type="checkbox" data-ri="${idx}" checked> ${escHtml(p ? p[state.lang] : i.product)} · ${escHtml(colorName(i.color))} · ${escHtml(i.size)} ×${Number(i.qty) || 0}</label>
       ${rtype === 'exchange' && p ? `<label class="exchange-size">${tr('Đổi sang size', 'New size')}
         <select data-rs="${idx}">${p.sizes.map(s => `<option${s === i.size ? ' selected' : ''}>${s}</option>`).join('')}</select></label>` : ''}
     </div>`;

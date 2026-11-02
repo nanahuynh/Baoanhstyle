@@ -41,6 +41,7 @@ function public_user(?array $u): ?array {
 function sign_in_as(string $uid): void {
   session_regenerate_id(true);
   $_SESSION['uid'] = $uid;
+  $_SESSION['at'] = time();
 }
 
 // Writes shared by single calls and batches.
@@ -50,6 +51,7 @@ function do_set(?array $user, string $col, string $id, array $data, bool $merge)
     put_doc($col, $id, check_create($user, $col, $id, $data, false), true);
   } else {
     if (!can_update($user, $col, $id)) denied();
+    if (!$user['admin']) $data = clean_value($data);
     put_doc($col, $id, $merge ? apply_update($cur, $data) : $data, false);
   }
 }
@@ -57,6 +59,7 @@ function do_update(?array $user, string $col, string $id, array $data): void {
   $cur = get_doc($col, $id);
   if ($cur === null) fail('not-found', 'Không tìm thấy.', 404);
   if (!can_update($user, $col, $id)) denied();
+  if (!$user['admin']) $data = clean_value($data);
   put_doc($col, $id, apply_update($cur, $data), false);
 }
 function do_delete(?array $user, string $col, string $id): void {
@@ -92,6 +95,7 @@ switch ($action) {
 
   case 'signup': {
     throttle_check();
+    rate_limit('signup', 5);
     $email = strtolower(trim((string)($in['email'] ?? '')));
     $pw = (string)($in['password'] ?? '');
     $name = trim((string)($in['name'] ?? ''));
@@ -123,6 +127,7 @@ switch ($action) {
   case 'reset': {
     // Always answers ok, so nobody can probe which emails have accounts.
     throttle_check();
+    rate_limit('reset', 5);
     $email = strtolower(trim((string)($in['email'] ?? '')));
     $st = db()->prepare('SELECT uid FROM users WHERE email = ?');
     $st->execute([$email]);
