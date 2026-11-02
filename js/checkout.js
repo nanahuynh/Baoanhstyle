@@ -241,7 +241,8 @@ $('pay-form').addEventListener('submit', async e => {
   btn.textContent = t('sending');
   try {
     const { id, number } = await placeOrder(order);
-    // keep contact for next time
+    // keep contact for next time (account if signed in, and this browser either way)
+    store.set('customer', { name: co.contact.name, phone: co.contact.phone, address: co.address });
     if (user) saveProfile({ name: profile.name || co.contact.name, phone: profile.phone || co.contact.phone }).catch(() => {});
     try { sessionStorage.setItem('baoanh.lastOrder', JSON.stringify({ ...order, id, number, createdAt: new Date().toISOString() })); } catch {}
     state.cart = [];
@@ -255,6 +256,22 @@ $('pay-form').addEventListener('submit', async e => {
     btn.textContent = t('paidPlaceOrder');
   }
 });
+
+// ---------- prefill from the last order on this browser ----------
+{
+  const saved = store.get('customer', null);
+  if (saved) {
+    const fill = (id, v) => { if (v && !$(id).value) $(id).value = v; };
+    fill('f-name', saved.name);
+    fill('f-phone', saved.phone);
+    if (saved.address) {
+      fill('f-address', saved.address.address);
+      fill('f-city', saved.address.city);
+      fill('f-zip', saved.address.zip);
+      if (saved.address.state) $('f-state').value = saved.address.state;
+    }
+  }
+}
 
 // ---------- prefill from account ----------
 onUser(async u => {
