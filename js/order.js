@@ -11,7 +11,7 @@ try {
   if (last && last.number === no) order = last;
 } catch {}
 
-function payText(o) { return payQrHtml(o.payment, o); }
+function payText(o) { return payQrHtml(o.payment, o, true); }
 
 function render() {
   if (!order) { $('confirm').hidden = true; $('no-order').hidden = false; return; }

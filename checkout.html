@@ -124,15 +124,32 @@
           </form>
         </section>
 
-        <!-- 4. Payment -->
-        <section class="step" data-step="payment">
+        <!-- 4. Review order -->
+        <section class="step" data-step="review">
           <header class="step-head">
             <span class="step-n">4</span>
-            <h2 data-en="Payment">Thanh toán</h2>
-            <button type="button" class="link-btn small step-edit" data-edit="payment" data-en="Edit">Sửa</button>
+            <h2 data-en="Review order">Xem lại đơn hàng</h2>
+            <button type="button" class="link-btn small step-edit" data-edit="review" data-en="Edit">Sửa</button>
           </header>
           <div class="step-summary"></div>
-          <form class="step-body" novalidate>
+          <form class="step-body" id="review-form" novalidate>
+            <ul class="mini-items review-items" id="review-items"></ul>
+            <div class="field">
+              <label for="f-note" data-i18n="note">Ghi chú (không bắt buộc)</label>
+              <textarea id="f-note" name="note" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" data-en="Continue to payment">Tiếp tục thanh toán</button>
+          </form>
+        </section>
+
+        <!-- 5. Payment: pay by QR first, then place the order -->
+        <section class="step" data-step="payment">
+          <header class="step-head">
+            <span class="step-n">5</span>
+            <h2 data-en="Payment">Thanh toán</h2>
+          </header>
+          <div class="step-summary"></div>
+          <form class="step-body" id="pay-form" novalidate>
             <div class="choices">
               <label class="choice"><input type="radio" name="payment" value="zelle" checked><span>Zelle</span></label>
               <label class="choice"><input type="radio" name="payment" value="venmo"><span>Venmo</span></label>
@@ -140,25 +157,9 @@
               <label class="choice"><input type="radio" name="payment" value="paypal"><span>PayPal</span></label>
             </div>
             <div class="pay-note" id="pay-note"></div>
-            <button type="submit" class="btn btn-primary" data-en="Review order">Xem lại đơn hàng</button>
-          </form>
-        </section>
-
-        <!-- 5. Review order -->
-        <section class="step" data-step="review">
-          <header class="step-head">
-            <span class="step-n">5</span>
-            <h2 data-en="Review order">Xem lại đơn hàng</h2>
-          </header>
-          <form class="step-body" id="review-form" novalidate>
-            <ul class="mini-items review-items" id="review-items"></ul>
-            <div class="field">
-              <label for="f-note" data-i18n="note">Ghi chú (không bắt buộc)</label>
-              <textarea id="f-note" name="note" rows="3"></textarea>
-            </div>
             <p class="muted small-print" data-en="By placing your order, you agree to our delivery & returns policy.">Khi đặt hàng, bạn đồng ý với chính sách giao hàng & đổi trả của shop.</p>
             <p class="form-msg" id="co-msg" role="alert"></p>
-            <button type="submit" class="btn btn-primary btn-block" id="co-submit" data-i18n="placeOrder">Đặt hàng</button>
+            <button type="submit" class="btn btn-primary btn-block" id="co-submit" data-i18n="paidPlaceOrder">Tôi đã chuyển tiền – Đặt hàng</button>
           </form>
         </section>
       </div>

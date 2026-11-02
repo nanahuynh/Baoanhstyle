@@ -1,8 +1,8 @@
-// CHECKOUT: Contact → Shipping address → Shipping method → Payment → Review order
+// CHECKOUT: Contact → Shipping address → Shipping method → Review order → Payment (pay by QR, then place the order)
 import { demo, onUser, placeOrder, getProfile, saveProfile } from './data.js';
 
 const $ = id => document.getElementById(id);
-const STEPS = ['contact', 'address', 'method', 'payment', 'review'];
+const STEPS = ['contact', 'address', 'method', 'review', 'payment'];
 const co = {
   step: 'contact',
   done: new Set(),
@@ -11,7 +11,8 @@ const co = {
   address: null,          // { address, city, state, zip }
   savedId: '',            // chosen saved address id ('' = new address)
   method: state.ship,
-  payment: 'zelle'
+  payment: 'zelle',
+  number: 'BA' + Date.now().toString().slice(-6)   // shown before payment so it can go in the transfer note
 };
 let user = null;
 let profile = {};
@@ -42,13 +43,14 @@ function renderSummary() {
 }
 
 // ---------- steps ----------
-function payNote(method) { return payQrHtml(method); }
+function payNote(method) { return payQrHtml(method, { total: cartTotals(co.method).total, number: co.number }); }
 function addressLine(a) { return a ? `${a.address}, ${a.city}, ${a.state} ${a.zip}` : ''; }
 
 function summaryHtml(name) {
   if (name === 'contact') return `${escHtml(co.contact.name)} · ${escHtml(co.contact.phone)}${co.contact.email ? ' · ' + escHtml(co.contact.email) : ''}`;
   if (name === 'address') return co.pickup ? tr('Nhận tại shop (Houston, TX)', 'Pick up in store (Houston, TX)') : escHtml(addressLine(co.address));
   if (name === 'method') { const m = shipMethod(co.method); return `${escHtml(m[state.lang])} · ${escHtml(tr(m.etaVi, m.etaEn))}`; }
+  if (name === 'review') { const n = state.cart.reduce((s, i) => s + i.qty, 0); return `${n} ${tr('món', n === 1 ? 'item' : 'items')} · ${money(cartTotals(co.method).total, tr('[Tổng tiền]', '[Total]'))}`; }
   if (name === 'payment') return payName(co.payment);
   return '';
 }
@@ -131,7 +133,7 @@ function next(name) {
   co.done.add(name);
   const after = STEPS[STEPS.indexOf(name) + 1];
   // skip steps that are already complete (e.g. editing contact after the fact)
-  const target = STEPS.slice(STEPS.indexOf(after)).find(s => !co.done.has(s)) || 'review';
+  const target = STEPS.slice(STEPS.indexOf(after)).find(s => !co.done.has(s)) || 'payment';
   go(target);
 }
 
@@ -196,10 +198,9 @@ section('method').querySelector('form').addEventListener('submit', e => {
 });
 $('method-options').addEventListener('change', e => { co.method = e.target.value; renderSummary(); });
 
-section('payment').querySelector('form').addEventListener('submit', e => {
+$('review-form').addEventListener('submit', e => {
   e.preventDefault();
-  co.payment = e.target.payment.value;
-  next('payment');
+  next('review');
 });
 section('payment').querySelector('form').addEventListener('change', e => {
   if (e.target.name === 'payment') { co.payment = e.target.value; $('pay-note').innerHTML = payNote(co.payment); }
@@ -210,11 +211,13 @@ document.addEventListener('click', e => {
   if (edit) go(edit.dataset.edit);
 });
 
-$('review-form').addEventListener('submit', async e => {
+$('pay-form').addEventListener('submit', async e => {
   e.preventDefault();
+  co.payment = e.target.payment.value;
   $('co-msg').textContent = '';
   const tt = cartTotals(co.method);
   const order = {
+    number: co.number,
     customer: co.contact,
     delivery: co.pickup ? 'pickup' : 'ship',
     shippingMethod: co.method,
@@ -249,7 +252,7 @@ $('review-form').addEventListener('submit', async e => {
   } catch {
     $('co-msg').textContent = t('sendFail');
     btn.disabled = false;
-    btn.textContent = t('placeOrder');
+    btn.textContent = t('paidPlaceOrder');
   }
 });
 

@@ -50,7 +50,7 @@ export function currentUser() {
 function orderNumber() { return 'BA' + Date.now().toString().slice(-6); }
 
 export async function placeOrder(order) {
-  const number = orderNumber();
+  const number = order.number || orderNumber();
   const user = currentUser();
   const full = { ...order, number, uid: user ? user.uid : null, status: 'new', stockApplied: false };
   if (demo) {

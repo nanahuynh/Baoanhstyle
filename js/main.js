@@ -184,7 +184,7 @@ const I18N = {
     contactInfo: 'Thông tin liên hệ', fullName: 'Họ và tên', phone: 'Số điện thoại', emailL: 'Email',
     address: 'Địa chỉ', city: 'Thành phố', stateL: 'Tiểu bang', zip: 'ZIP code',
     cash: 'Tiền mặt khi nhận hàng', cashNote: 'Trả tiền mặt khi nhận hàng hoặc khi lấy tại shop.',
-    note: 'Ghi chú (không bắt buộc)', placeOrder: 'Đặt hàng', orderSummary: 'Đơn hàng của bạn',
+    note: 'Ghi chú (không bắt buộc)', placeOrder: 'Đặt hàng', paidPlaceOrder: 'Tôi đã chuyển tiền – Đặt hàng', orderSummary: 'Đơn hàng của bạn',
     required: 'Vui lòng điền mục này.', badPhone: 'Số điện thoại chưa đúng.',
     thanks: 'Cảm ơn bạn đã đặt hàng!', orderNo: 'Mã đơn hàng',
     sending: 'Đang gửi…', sendFail: 'Chưa gửi được đơn. Vui lòng thử lại hoặc gọi (669) 292-7189.'
@@ -221,7 +221,7 @@ const I18N = {
     contactInfo: 'Contact', fullName: 'Full name', phone: 'Phone', emailL: 'Email',
     address: 'Address', city: 'City', stateL: 'State', zip: 'ZIP code',
     cash: 'Cash on delivery', cashNote: 'Pay cash on delivery or at pickup.',
-    note: 'Note (optional)', placeOrder: 'Place order', orderSummary: 'Your order',
+    note: 'Note (optional)', placeOrder: 'Place order', paidPlaceOrder: 'I have paid – Place order', orderSummary: 'Your order',
     required: 'Please fill this in.', badPhone: 'Please enter a valid phone number.',
     thanks: 'Thank you for your order!', orderNo: 'Order number',
     sending: 'Sending…', sendFail: 'Your order could not be sent. Please try again or call (669) 292-7189.'
@@ -245,12 +245,15 @@ function tr(vi, en) { return state.lang === 'vi' ? vi : en; }
 // ---------- QR payment ----------
 function payName(id) { return PAY_METHODS[id] ? PAY_METHODS[id].name : t('cash'); }
 // QR + how to pay. With an order (after checkout) it also shows the amount and the order number for the memo.
-function payQrHtml(id, order) {
+function payQrHtml(id, order, placed) {
   const m = PAY_METHODS[id];
   if (!m) return `<p>${escHtml(t('cashNote'))}</p>`;
   const amount = order && typeof order.total === 'number' ? money(order.total) : null;
   const memo = order && order.number;
-  const how = memo
+  const how = placed
+    ? tr(`Shop sẽ kiểm tra khoản chuyển <b>${escHtml(amount || '[tổng tiền]')}</b> qua ${m.name} (lời nhắn <b>${escHtml(memo)}</b>) và nhắn tin xác nhận cho bạn. Nếu bạn chưa chuyển, quét mã bên cạnh.`,
+         `We will check your <b>${escHtml(amount || '[total]')}</b> ${m.name} payment (note <b>${escHtml(memo)}</b>) and text you to confirm. Not paid yet? Scan the code.`)
+    : memo
     ? tr(`Quét mã bằng app ${m.name}, chuyển <b>${escHtml(amount || '[tổng tiền]')}</b> và ghi mã đơn <b>${escHtml(memo)}</b> trong lời nhắn.`,
          `Scan with ${m.name}, send <b>${escHtml(amount || '[total]')}</b> and put <b>${escHtml(memo)}</b> in the note.`)
     : tr(`Sau khi đặt hàng, quét mã bằng app ${m.name} và ghi mã đơn trong lời nhắn.`,
