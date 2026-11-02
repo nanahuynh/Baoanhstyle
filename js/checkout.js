@@ -7,7 +7,7 @@ const co = {
   step: 'contact',
   done: new Set(),
   contact: { name: '', phone: '', email: '' },
-  pickup: state.ship === 'pickup',
+  pickup: false,   // store pickup is switched off
   address: null,          // { address, city, state, zip }
   savedId: '',            // chosen saved address id ('' = new address)
   method: state.ship,
@@ -111,7 +111,6 @@ function render() {
     if (edit) edit.hidden = !done;
   });
   $('login-fill').hidden = demo || !!user;
-  $('f-pickup').checked = co.pickup;
   $('address-area').hidden = co.pickup;
   renderSavedAddresses();
   renderMethods();
@@ -160,7 +159,7 @@ function validate(form) {
 section('contact').querySelector('form').addEventListener('submit', e => {
   e.preventDefault();
   if (!validate(e.target)) return;
-  co.contact = { name: $('f-name').value.trim(), phone: $('f-phone').value.trim(), email: $('f-email').value.trim() };
+  co.contact = { name: $('f-name').value.trim(), phone: $('f-phone').value.trim(), email: user && !user.demo ? user.email || '' : '' };
   next('contact');
 });
 
@@ -185,12 +184,6 @@ section('address').querySelector('form').addEventListener('submit', async e => {
   }
   if (co.method === 'pickup') co.method = SHIPPING_METHODS[0].id;
   next('address');
-});
-$('f-pickup').addEventListener('change', e => {
-  co.pickup = e.target.checked;
-  co.method = co.pickup ? 'pickup' : SHIPPING_METHODS[0].id;
-  co.done.delete('method');
-  render();
 });
 $('saved-addresses').addEventListener('change', e => { co.savedId = e.target.value; render(); });
 
@@ -267,7 +260,6 @@ onUser(async u => {
     try { profile = await getProfile(); } catch { profile = {}; }
     if (!$('f-name').value) $('f-name').value = profile.name || (u.demo ? '' : u.displayName) || '';
     if (!$('f-phone').value) $('f-phone').value = profile.phone || '';
-    if (!$('f-email').value && !u.demo) $('f-email').value = u.email || '';
     const def = (profile.addresses || []).find(a => a.isDefault) || (profile.addresses || [])[0];
     if (def && !co.address) co.savedId = def.id;
   }

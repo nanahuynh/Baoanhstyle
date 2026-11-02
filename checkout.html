@@ -60,17 +60,10 @@
               <input id="f-name" name="name" autocomplete="name" required>
               <span class="err"></span>
             </div>
-            <div class="field-row">
-              <div class="field">
-                <label for="f-phone" data-i18n="phone">Số điện thoại</label>
-                <input id="f-phone" name="phone" type="tel" autocomplete="tel" required>
-                <span class="err"></span>
-              </div>
-              <div class="field">
-                <label for="f-email" data-en="Email (for your receipt)">Email (để nhận xác nhận đơn)</label>
-                <input id="f-email" name="email" type="email" autocomplete="email">
-                <span class="err"></span>
-              </div>
+            <div class="field">
+              <label for="f-phone" data-i18n="phone">Số điện thoại</label>
+              <input id="f-phone" name="phone" type="tel" autocomplete="tel" required>
+              <span class="err"></span>
             </div>
             <button type="submit" class="btn btn-primary" data-en="Continue">Tiếp tục</button>
           </form>
@@ -85,7 +78,6 @@
           </header>
           <div class="step-summary"></div>
           <form class="step-body" novalidate>
-            <label class="choice pickup-choice"><input type="checkbox" id="f-pickup"><span data-en="I will pick up in store (Houston, TX), no address needed">Tôi nhận tại shop (Houston, TX), không cần địa chỉ</span></label>
             <div id="address-area">
               <div class="saved-addresses" id="saved-addresses"></div>
               <div id="address-fields">

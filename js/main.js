@@ -118,8 +118,7 @@ const SIZE_CHART = [
 
 // Cách giao hàng. fee: số USD, null = chưa có (hiện [Phí ship]).
 const SHIPPING_METHODS = [
-  { id: 'standard', vi: 'Giao tận nơi', en: 'Shipping', etaVi: '[3–5] ngày làm việc', etaEn: '[3–5] business days', fee: 8 },
-  { id: 'pickup', vi: 'Nhận tại shop (Houston, TX)', en: 'Pick up in store (Houston, TX)', etaVi: 'Shop nhắn khi hàng sẵn sàng', etaEn: 'We will text you when it is ready', fee: 0 }
+  { id: 'standard', vi: 'Giao tận nơi', en: 'Shipping', etaVi: '[3–5] ngày làm việc', etaEn: '[3–5] business days', fee: 8 }
 ];
 // Miễn phí giao hàng cho đơn từ bao nhiêu USD (null = không áp dụng).
 const FREE_SHIPPING_OVER = 299;
@@ -293,7 +292,7 @@ const state = {
   favs: store.get('favs', {}),
   cart: [].concat(store.get('cart', [])).filter(i => i && findProduct(i.id)),
   promo: store.get('promo', ''),
-  ship: store.get('ship', SHIPPING_METHODS[0].id)
+  ship: (SHIPPING_METHODS.find(m => m.id === store.get('ship', '')) || SHIPPING_METHODS[0]).id
 };
 
 // ---------- cart ----------
