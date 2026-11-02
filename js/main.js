@@ -118,12 +118,11 @@ const SIZE_CHART = [
 
 // Cách giao hàng. fee: số USD, null = chưa có (hiện [Phí ship]).
 const SHIPPING_METHODS = [
-  { id: 'standard', vi: 'Giao tiêu chuẩn', en: 'Standard shipping', etaVi: '[3–5] ngày làm việc', etaEn: '[3–5] business days', fee: null },
-  { id: 'express', vi: 'Giao nhanh', en: 'Express shipping', etaVi: '[1–2] ngày làm việc', etaEn: '[1–2] business days', fee: null },
+  { id: 'standard', vi: 'Giao tận nơi', en: 'Shipping', etaVi: '[3–5] ngày làm việc', etaEn: '[3–5] business days', fee: 8 },
   { id: 'pickup', vi: 'Nhận tại shop (Houston, TX)', en: 'Pick up in store (Houston, TX)', etaVi: 'Shop nhắn khi hàng sẵn sàng', etaEn: 'We will text you when it is ready', fee: 0 }
 ];
 // Miễn phí giao hàng cho đơn từ bao nhiêu USD (null = không áp dụng).
-const FREE_SHIPPING_OVER = null;
+const FREE_SHIPPING_OVER = 299;
 
 // Thuế bán hàng (sales tax). 0.0825 = 8.25% (Houston, TX).
 // TAX_ON_SHIPPING: Texas tính thuế cả trên phí giao hàng của hàng chịu thuế.
