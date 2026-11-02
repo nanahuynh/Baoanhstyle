@@ -42,18 +42,14 @@ function renderSummary() {
 }
 
 // ---------- steps ----------
-function payNote(method) {
-  return method === 'zelle' ? tr(`Chuyển Zelle tới ${PAYMENT_INFO.zelle}, ghi mã đơn trong lời nhắn. Shop giao hàng sau khi nhận tiền.`, `Send Zelle to ${PAYMENT_INFO.zelle} with your order number in the memo. We ship once payment arrives.`)
-    : method === 'venmo' ? tr(`Chuyển Venmo tới ${PAYMENT_INFO.venmo}, ghi mã đơn trong lời nhắn. Shop giao hàng sau khi nhận tiền.`, `Send Venmo to ${PAYMENT_INFO.venmo} with your order number in the note. We ship once payment arrives.`)
-    : t('cashNote');
-}
+function payNote(method) { return payQrHtml(method); }
 function addressLine(a) { return a ? `${a.address}, ${a.city}, ${a.state} ${a.zip}` : ''; }
 
 function summaryHtml(name) {
   if (name === 'contact') return `${escHtml(co.contact.name)} · ${escHtml(co.contact.phone)}${co.contact.email ? ' · ' + escHtml(co.contact.email) : ''}`;
   if (name === 'address') return co.pickup ? tr('Nhận tại shop (Houston, TX)', 'Pick up in store (Houston, TX)') : escHtml(addressLine(co.address));
   if (name === 'method') { const m = shipMethod(co.method); return `${escHtml(m[state.lang])} · ${escHtml(tr(m.etaVi, m.etaEn))}`; }
-  if (name === 'payment') return co.payment === 'cash' ? t('cash') : co.payment === 'zelle' ? 'Zelle' : 'Venmo';
+  if (name === 'payment') return payName(co.payment);
   return '';
 }
 
@@ -120,7 +116,7 @@ function render() {
   renderSavedAddresses();
   renderMethods();
   document.querySelector(`input[name=payment][value=${co.payment}]`).checked = true;
-  $('pay-note').textContent = payNote(co.payment);
+  $('pay-note').innerHTML = payNote(co.payment);
   renderSummary();
   if (co.step === 'review') renderReview();
 }
@@ -213,7 +209,7 @@ section('payment').querySelector('form').addEventListener('submit', e => {
   next('payment');
 });
 section('payment').querySelector('form').addEventListener('change', e => {
-  if (e.target.name === 'payment') { co.payment = e.target.value; $('pay-note').textContent = payNote(co.payment); }
+  if (e.target.name === 'payment') { co.payment = e.target.value; $('pay-note').innerHTML = payNote(co.payment); }
 });
 
 document.addEventListener('click', e => {

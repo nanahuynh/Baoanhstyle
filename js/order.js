@@ -11,11 +11,7 @@ try {
   if (last && last.number === no) order = last;
 } catch {}
 
-function payText(o) {
-  if (o.payment === 'zelle') return tr(`Chuyển <b>${escHtml(money(o.total, '[tổng tiền]'))}</b> qua Zelle tới <b>${escHtml(PAYMENT_INFO.zelle)}</b>, ghi mã đơn <b>${escHtml(o.number)}</b> trong lời nhắn.`, `Send <b>${escHtml(money(o.total, '[total]'))}</b> by Zelle to <b>${escHtml(PAYMENT_INFO.zelle)}</b> with <b>${escHtml(o.number)}</b> in the memo.`);
-  if (o.payment === 'venmo') return tr(`Chuyển <b>${escHtml(money(o.total, '[tổng tiền]'))}</b> qua Venmo tới <b>${escHtml(PAYMENT_INFO.venmo)}</b>, ghi mã đơn <b>${escHtml(o.number)}</b> trong lời nhắn.`, `Send <b>${escHtml(money(o.total, '[total]'))}</b> by Venmo to <b>${escHtml(PAYMENT_INFO.venmo)}</b> with <b>${escHtml(o.number)}</b> in the note.`);
-  return escHtml(t('cashNote'));
-}
+function payText(o) { return payQrHtml(o.payment, o); }
 
 function render() {
   if (!order) { $('confirm').hidden = true; $('no-order').hidden = false; return; }

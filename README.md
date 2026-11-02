@@ -44,5 +44,6 @@ Sao lưu: tải file SQLite (hoặc export database MySQL trong phpMyAdmin) đ�
 ## Cấu hình
 
 - **Sản phẩm, giá, bảng size, phí ship, thuế, mã giảm giá, chính sách:** đầu file `js/main.js`
+- **Thanh toán QR (Zelle, Venmo, Cash App, PayPal):** `PAY_METHODS` trong `js/main.js`, ảnh mã QR trong `images/pay/`
 - **Server:** `js/config.js` (`API_URL`) và `api/config.php` (tài khoản quản trị, database, email)
 - **Quyền dữ liệu:** `api/lib.php` — khách chỉ xem đơn / đổi trả của chính mình; kho hàng và sổ thu chi chỉ tài khoản quản trị xem được.

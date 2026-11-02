@@ -226,7 +226,7 @@ function renderOrderDetail(o) {
       <ul class="return-list">${myReturnsHere.map(r => `<li>${r.type === 'exchange' ? tr('Đổi hàng', 'Exchange') : tr('Trả hàng', 'Return')} · ${fmtDate(r.createdAt)} <span class="pill rs-${escHtml(r.status)}">${returnStatusLabel(r.status)}</span>${r.reply ? `<p class="muted">${tr('Shop', 'Shop')}: ${escHtml(r.reply)}</p>` : ''}</li>`).join('')}</ul></div>` : ''}
     <div class="detail-grid">
       <div class="panel-box"><b>${tr('Nhận hàng', 'Delivery')}</b><p>${escHtml(m[state.lang])}${o.address ? `<br>${escHtml(o.address.address)}, ${escHtml(o.address.city)}, ${escHtml(o.address.state)} ${escHtml(o.address.zip)}` : ''}</p></div>
-      <div class="panel-box"><b>${tr('Thanh toán', 'Payment')}</b><p>${o.payment === 'cash' ? escHtml(t('cash')) : o.payment === 'zelle' ? 'Zelle' : 'Venmo'}</p></div>
+      <div class="panel-box"><b>${tr('Thanh toán', 'Payment')}</b><p>${escHtml(payName(o.payment))}</p></div>
       <div class="panel-box totals-box">
         <div class="summary-row"><span>${t('subtotal')}</span><span>${money(o.subtotal, '—')}</span></div>
         ${o.promoCode ? `<div class="summary-row"><span>${tr('Giảm giá', 'Discount')} (${escHtml(o.promoCode)})</span><span>−${money(o.discount, '—')}</span></div>` : ''}

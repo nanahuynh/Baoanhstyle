@@ -16,7 +16,7 @@ const STATUS = {
 };
 const SOLD = ['confirmed', 'shipping', 'done'];   // statuses that count as sold / take stock
 const KIND = { capital: 'Góp vốn', withdraw: 'Rút vốn', expense: 'Chi phí', income: 'Thu khác' };
-const PAY = { zelle: 'Zelle', venmo: 'Venmo', cash: 'Tiền mặt' };
+const PAY = { zelle: 'Zelle', venmo: 'Venmo', cashapp: 'Cash App', paypal: 'PayPal', cash: 'Tiền mặt' };
 
 const data = { orders: [], inventory: [], ledger: [], returns: [] };
 const RSTATUS = { requested: 'Mới gửi', approved: 'Đã chấp nhận', rejected: 'Từ chối', received: 'Đã nhận hàng trả', completed: 'Hoàn tất' };

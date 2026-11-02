@@ -143,10 +143,12 @@ const POLICY = {
   returnsEn: '[Return window, conditions (tags on, unwashed…), who pays return shipping]'
 };
 
-// Thông tin thanh toán chuyển khoản
-const PAYMENT_INFO = {
-  zelle: '[Zelle của shop]',
-  venmo: '[@Venmo của shop]'
+// Thanh toán bằng mã QR. qr: ảnh trong images/pay/. link: mở thẳng app trên điện thoại (null nếu app không có link).
+const PAY_METHODS = {
+  zelle:   { name: 'Zelle',    to: '(669) 292-7189', who: 'PHOENIX GLOW GROUP, LLC', qr: 'images/pay/zelle.jpg',   link: null },
+  venmo:   { name: 'Venmo',    to: '@Hang2021',      who: 'Bao Anh',                 qr: 'images/pay/venmo.jpg',   link: 'https://venmo.com/u/Hang2021' },
+  cashapp: { name: 'Cash App', to: '$baoanhusa',     who: 'Hang Huynh',              qr: 'images/pay/cashapp.jpg', link: 'https://cash.app/$baoanhusa' },
+  paypal:  { name: 'PayPal',   to: 'Hang Huynh',     who: 'Hang Huynh',              qr: 'images/pay/paypal.jpg',  link: 'https://www.paypal.com/qrcodes/p2pqrc/UKWNCS2S7TH7S' }
 };
 
 // ======================================================================
@@ -241,6 +243,30 @@ function money(v, placeholder) {
   return typeof v === 'number' ? '$' + v.toFixed(2) : placeholder;
 }
 function tr(vi, en) { return state.lang === 'vi' ? vi : en; }
+
+// ---------- QR payment ----------
+function payName(id) { return PAY_METHODS[id] ? PAY_METHODS[id].name : t('cash'); }
+// QR + how to pay. With an order (after checkout) it also shows the amount and the order number for the memo.
+function payQrHtml(id, order) {
+  const m = PAY_METHODS[id];
+  if (!m) return `<p>${escHtml(t('cashNote'))}</p>`;
+  const amount = order && typeof order.total === 'number' ? money(order.total) : null;
+  const memo = order && order.number;
+  const how = memo
+    ? tr(`Quét mã bằng app ${m.name}, chuyển <b>${escHtml(amount || '[tổng tiền]')}</b> và ghi mã đơn <b>${escHtml(memo)}</b> trong lời nhắn.`,
+         `Scan with ${m.name}, send <b>${escHtml(amount || '[total]')}</b> and put <b>${escHtml(memo)}</b> in the note.`)
+    : tr(`Sau khi đặt hàng, quét mã bằng app ${m.name} và ghi mã đơn trong lời nhắn.`,
+         `After you place the order, scan with ${m.name} and put your order number in the note.`);
+  return `<div class="pay-qr">
+    <img src="${m.qr}" alt="${escHtml(tr('Mã QR ' + m.name, m.name + ' QR code'))}" width="560" loading="lazy">
+    <div class="pay-qr-text">
+      <p class="pay-qr-to"><b>${escHtml(m.name)}</b>: ${escHtml(m.to)}<br><span>${escHtml(m.who)}</span></p>
+      <p>${how}</p>
+      ${m.link ? `<a class="btn btn-outline btn-sm" href="${m.link}" target="_blank" rel="noopener">${escHtml(tr('Mở app ' + m.name, 'Open ' + m.name))}</a>` : ''}
+      <p class="muted small">${escHtml(tr('Shop giao hàng sau khi nhận được tiền.', 'We ship once payment arrives.'))}</p>
+    </div>
+  </div>`;
+}
 function priceText(p) { return money(p.price, p.sale ? tr('[Giá sale]', '[Sale price]') : tr('[Giá]', '[Price]')); }
 // once the real price is set, an unknown original price is simply not shown
 function oldPriceText(p) { return p.sale && !(typeof p.price === 'number' && typeof p.oldPrice !== 'number') ? money(p.oldPrice, tr('[Giá gốc]', '[Was]')) : ''; }
