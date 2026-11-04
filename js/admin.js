@@ -230,7 +230,7 @@ function orderCard(o) {
         <dt>Nhận hàng</dt><dd>${addr}</dd>
         <dt>Giao hàng</dt><dd>${SHIP_NAME[o.shippingMethod] || (o.delivery === 'pickup' ? 'Nhận tại shop' : 'Giao tận nơi')}</dd>
         <dt>Thanh toán</dt><dd>${PAY[o.payment] || esc(o.payment)}</dd>
-        ${typeof o.tax === 'number' ? `<dt>Thuế</dt><dd>${fmt(o.tax)} (${+(o.taxRate * 100).toFixed(3)}%)</dd>` : ''}
+        ${typeof o.tax === 'number' ? `<dt>Thuế</dt><dd>${fmt(o.tax)} (${o.taxState ? esc(o.taxState) + ' ' : ''}${+(Number(o.taxRate) * 100).toFixed(3)}%)</dd>` : ''}
         ${o.promoCode ? `<dt>Mã giảm giá</dt><dd>${esc(o.promoCode)}${typeof o.discount === 'number' ? ' (−' + fmt(o.discount) + ')' : ''}</dd>` : ''}
         ${o.note ? `<dt>Ghi chú</dt><dd>${esc(o.note)}</dd>` : ''}
       </dl>

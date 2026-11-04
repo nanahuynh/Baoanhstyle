@@ -123,10 +123,26 @@ const SHIPPING_METHODS = [
 // Miễn phí giao hàng cho đơn từ bao nhiêu USD (null = không áp dụng).
 const FREE_SHIPPING_OVER = 299;
 
-// Thuế bán hàng (sales tax). 0.0825 = 8.25% (Houston, TX).
-// TAX_ON_SHIPPING: Texas tính thuế cả trên phí giao hàng của hàng chịu thuế.
-const TAX_RATE = 0.0825;
+// Thuế bán hàng (sales tax) theo tiểu bang của địa chỉ giao hàng. 0.0825 = 8.25%.
+// Shop ở Houston, TX: khách ở Texas đóng 8.25% (Texas tính theo địa điểm của shop).
+// Tiểu bang khác: 0% cho tới khi shop đăng ký thu thuế ở bang đó (thường khi doanh số vào bang
+// vượt khoảng $100,000/năm). Khi đó thêm một dòng, ví dụ  CA: 0.0725,
+// TAX_ON_SHIPPING: tính thuế cả trên phí ship (Texas có tính).
+const TAX_BY_STATE = {
+  TX: 0.0825
+};
 const TAX_ON_SHIPPING = true;
+const SHOP_STATE = 'TX';
+const US_STATES = {
+  AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California', CO: 'Colorado', CT: 'Connecticut',
+  DE: 'Delaware', DC: 'District of Columbia', FL: 'Florida', GA: 'Georgia', HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois',
+  IN: 'Indiana', IA: 'Iowa', KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland',
+  MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri', MT: 'Montana',
+  NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey', NM: 'New Mexico', NY: 'New York',
+  NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio', OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania',
+  RI: 'Rhode Island', SC: 'South Carolina', SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah',
+  VT: 'Vermont', VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming'
+};
 
 // Mã giảm giá. type: 'percent' (giảm %) hoặc 'fixed' (giảm số USD). minSubtotal: đơn tối thiểu.
 // Ví dụ: WELCOME10: { type: 'percent', value: 10, minSubtotal: 0 }
@@ -295,7 +311,9 @@ const state = {
   favs: store.get('favs', {}),
   cart: [].concat(store.get('cart', [])).filter(i => i && findProduct(i.id)),
   promo: store.get('promo', ''),
-  ship: (SHIPPING_METHODS.find(m => m.id === store.get('ship', '')) || SHIPPING_METHODS[0]).id
+  ship: (SHIPPING_METHODS.find(m => m.id === store.get('ship', '')) || SHIPPING_METHODS[0]).id,
+  // state used for tax before the address is entered: the customer's last address, else the shop's
+  taxState: normState((store.get('customer', null) || {}).address?.state) || SHOP_STATE
 };
 
 // ---------- cart ----------
@@ -334,7 +352,11 @@ function shippingFor(methodId, subtotalAfterDiscount) {
 }
 
 // Totals for the bag / checkout. Any unknown number makes the total unknown (null).
-function cartTotals(methodId = state.ship, promoCode = state.promo) {
+function normState(s) { const c = String(s || '').trim().toUpperCase(); return US_STATES[c] ? c : ''; }
+function taxRateFor(st) { return TAX_BY_STATE[normState(st)] ?? 0; }
+
+function cartTotals(methodId = state.ship, promoCode = state.promo, taxState = state.taxState) {
+  const taxRate = taxRateFor(taxState);
   const subtotal = cartSubtotal();
   const promo = checkPromo(promoCode, subtotal);
   const discount = promo.ok ? promo.discount : 0;
@@ -342,10 +364,10 @@ function cartTotals(methodId = state.ship, promoCode = state.promo) {
   const shipping = shippingFor(methodId, afterDiscount);
   const taxable = typeof afterDiscount === 'number' && (!TAX_ON_SHIPPING || typeof shipping === 'number')
     ? afterDiscount + (TAX_ON_SHIPPING ? shipping : 0) : null;
-  const tax = typeof taxable === 'number' ? Math.round(taxable * TAX_RATE * 100) / 100 : null;
+  const tax = typeof taxable === 'number' ? Math.round(taxable * taxRate * 100) / 100 : null;
   const total = (typeof afterDiscount === 'number' && typeof shipping === 'number' && typeof tax === 'number')
     ? Math.round((afterDiscount + shipping + tax) * 100) / 100 : null;
-  return { subtotal, promo, discount, shipping, tax, total };
+  return { subtotal, promo, discount, shipping, tax, total, taxRate, taxState: normState(taxState) };
 }
 
 const HEART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>';
@@ -391,7 +413,7 @@ function renderHomeProducts() {
   el.innerHTML = PRODUCTS.slice(0, 4).map(productCard).join('');
 }
 
-function taxLabel() { return `${tr('Thuế', 'Tax')} (${+(TAX_RATE * 100).toFixed(3)}%)`; }
+function taxLabel(tt) { return `${tr('Thuế', 'Tax')} ${tt.taxState} (${+(tt.taxRate * 100).toFixed(3)}%)`; }
 
 function updateCounts() {
   const favCount = Object.values(state.favs).filter(Boolean).length;

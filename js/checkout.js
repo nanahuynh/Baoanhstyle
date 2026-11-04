@@ -2,6 +2,11 @@
 import { demo, onUser, placeOrder, getProfile, saveProfile } from './data.js';
 
 const $ = id => document.getElementById(id);
+
+// state picker for the shipping address (tax depends on it)
+$('f-state').innerHTML = Object.entries(US_STATES).sort((a, b) => a[1].localeCompare(b[1]))
+  .map(([code, name]) => `<option value="${code}">${name} (${code})</option>`).join('');
+$('f-state').value = state.taxState;
 const STEPS = ['contact', 'address', 'method', 'review', 'payment'];
 const co = {
   step: 'contact',
@@ -30,33 +35,44 @@ function renderSummary() {
         <span class="mini-price">${typeof p.price === 'number' ? money(p.price * item.qty) : priceText(p)}</span>
       </li>`;
   }).join('');
-  const tt = cartTotals(co.method);
+  const tt = cartTotals(co.method, state.promo, taxState());
   $('co-subtotal').textContent = money(tt.subtotal, tr('[Tạm tính]', '[Subtotal]'));
   $('co-row-discount').hidden = !tt.promo.ok;
   $('co-code').textContent = tt.promo.ok ? `(${tt.promo.code})` : '';
   $('co-discount').textContent = typeof tt.discount === 'number' ? '−' + money(tt.discount) : tr('[Giảm]', '[Discount]');
   $('co-shipping').textContent = tt.shipping === 0 ? t('free') : money(tt.shipping, tr('[Phí ship]', '[Shipping]'));
-  $('co-tax-label').textContent = taxLabel();
+  $('co-tax-label').textContent = taxLabel(tt);
   $('co-tax').textContent = money(tt.tax, tr('[Thuế]', '[Tax]'));
   $('co-total').textContent = money(tt.total, tr('[Tổng tiền]', '[Total]'));
   return tt;
 }
 
+// tax follows the shipping address: the state being typed in, else the chosen address, else the default
+function taxState() {
+  if (co.step === 'address') {
+    if (co.savedId) {
+      const a = (profile.addresses || []).find(x => x.id === co.savedId);
+      if (a && normState(a.state)) return a.state;
+    } else if (normState($('f-state').value)) return $('f-state').value;
+  }
+  return (co.address && co.address.state) || state.taxState;
+}
+
 // ---------- steps ----------
-function payNote(method) { return payQrHtml(method, { total: cartTotals(co.method).total, number: co.number }); }
+function payNote(method) { return payQrHtml(method, { total: cartTotals(co.method, state.promo, taxState()).total, number: co.number }); }
 function addressLine(a) { return a ? `${a.address}, ${a.city}, ${a.state} ${a.zip}` : ''; }
 
 function summaryHtml(name) {
   if (name === 'contact') return `${escHtml(co.contact.name)} · ${escHtml(co.contact.phone)}${co.contact.email ? ' · ' + escHtml(co.contact.email) : ''}`;
   if (name === 'address') return co.pickup ? tr('Nhận tại shop (Houston, TX)', 'Pick up in store (Houston, TX)') : escHtml(addressLine(co.address));
   if (name === 'method') { const m = shipMethod(co.method); return `${escHtml(m[state.lang])} · ${escHtml(tr(m.etaVi, m.etaEn))}`; }
-  if (name === 'review') { const n = state.cart.reduce((s, i) => s + i.qty, 0); return `${n} ${tr('món', n === 1 ? 'item' : 'items')} · ${money(cartTotals(co.method).total, tr('[Tổng tiền]', '[Total]'))}`; }
+  if (name === 'review') { const n = state.cart.reduce((s, i) => s + i.qty, 0); return `${n} ${tr('món', n === 1 ? 'item' : 'items')} · ${money(cartTotals(co.method, state.promo, taxState()).total, tr('[Tổng tiền]', '[Total]'))}`; }
   if (name === 'payment') return payName(co.payment);
   return '';
 }
 
 function renderMethods() {
-  const tt = cartTotals(co.method);
+  const tt = cartTotals(co.method, state.promo, taxState());
   const after = typeof tt.subtotal === 'number' ? tt.subtotal - (tt.discount || 0) : null;
   const options = SHIPPING_METHODS.filter(m => co.pickup ? m.id === 'pickup' : m.id !== 'pickup');
   if (!options.some(m => m.id === co.method)) co.method = options[0].id;
@@ -173,7 +189,7 @@ section('address').querySelector('form').addEventListener('submit', async e => {
     return next('address');
   }
   if (!validate(e.target)) return;
-  co.address = { address: $('f-address').value.trim(), city: $('f-city').value.trim(), state: $('f-state').value.trim().toUpperCase(), zip: $('f-zip').value.trim() };
+  co.address = { address: $('f-address').value.trim(), city: $('f-city').value.trim(), state: normState($('f-state').value), zip: $('f-zip').value.trim() };
   if (user && $('f-save-address').checked) {
     const addresses = profile.addresses || [];
     const exists = addresses.some(a => addressLine(a).toLowerCase() === addressLine(co.address).toLowerCase());
@@ -188,6 +204,7 @@ section('address').querySelector('form').addEventListener('submit', async e => {
   next('address');
 });
 $('saved-addresses').addEventListener('change', e => { co.savedId = e.target.value; render(); });
+$('f-state').addEventListener('change', () => renderSummary());
 
 section('method').querySelector('form').addEventListener('submit', e => {
   e.preventDefault();
@@ -215,7 +232,7 @@ $('pay-form').addEventListener('submit', async e => {
   e.preventDefault();
   co.payment = e.target.payment.value;
   $('co-msg').textContent = '';
-  const tt = cartTotals(co.method);
+  const tt = cartTotals(co.method, state.promo, taxState());
   const order = {
     number: co.number,
     customer: co.contact,
@@ -232,7 +249,8 @@ $('pay-form').addEventListener('submit', async e => {
     promoCode: tt.promo.ok ? tt.promo.code : '',
     discount: tt.promo.ok ? tt.discount : 0,
     shipping: tt.shipping,
-    taxRate: TAX_RATE,
+    taxRate: tt.taxRate,
+    taxState: tt.taxState,
     tax: tt.tax,
     total: tt.total
   };
@@ -268,7 +286,7 @@ $('pay-form').addEventListener('submit', async e => {
       fill('f-address', saved.address.address);
       fill('f-city', saved.address.city);
       fill('f-zip', saved.address.zip);
-      if (saved.address.state) $('f-state').value = saved.address.state;
+      if (normState(saved.address.state)) $('f-state').value = normState(saved.address.state);
     }
   }
 }

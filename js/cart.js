@@ -58,7 +58,7 @@ function renderCart() {
   $('discount-code').textContent = tt.promo.ok ? `(${tt.promo.code})` : '';
   $('sum-discount').textContent = typeof tt.discount === 'number' ? '−' + money(tt.discount) : tr('[Giảm]', '[Discount]');
   $('sum-shipping').textContent = tt.shipping === 0 ? t('free') : money(tt.shipping, tr('[Phí ship]', '[Shipping]'));
-  $('tax-label').textContent = taxLabel();
+  $('tax-label').textContent = taxLabel(tt);
   $('sum-tax').textContent = money(tt.tax, tr('[Thuế]', '[Tax]'));
   $('sum-total').textContent = money(tt.total, tr('[Tổng tiền]', '[Total]'));
 
