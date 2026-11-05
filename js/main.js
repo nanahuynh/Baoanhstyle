@@ -9,7 +9,8 @@ const CATEGORY_LIST = [
   { id: 'ao', vi: 'Áo', en: 'Tops' },
   { id: 'quan', vi: 'Quần', en: 'Pants' },
   { id: 'set', vi: 'Set', en: 'Sets' },
-  { id: 'vay', vi: 'Váy', en: 'Dresses & skirts' }
+  { id: 'vay', vi: 'Váy', en: 'Skirts' },
+  { id: 'dam', vi: 'Đầm', en: 'Dresses' }
 ];
 const OCCASIONS = [
   { id: 'tiec', vi: 'Dự tiệc', en: 'Occasion' },
@@ -26,7 +27,7 @@ const OCCASIONS = [
 const PRODUCTS = [
   {
     id: 'e', vi: 'Đầm cổ bẻ khóa kéo', en: 'Collared zip-front mini dress', badge: 'NEW',
-    category: 'vay', occasions: ['cong-so', 'tiec'], sizes: ['S', 'M', 'L'],
+    category: 'dam', occasions: ['cong-so', 'tiec'], sizes: ['S', 'M', 'L'],
     img: 'images/dam-co-be-khoa-keo-1.webp', bg: '#ecdcd3', dots: ['#2f2a28'], price: 58, video: null,
     gallery: [
       'images/dam-co-be-khoa-keo-1.webp',
@@ -150,7 +151,7 @@ const I18N = {
     newsTitle: 'Nhận tin hàng mới và lịch Live',
     newsBody: 'Ưu đãi riêng cho khách thân thiết, gửi thẳng vào hộp thư của bạn.',
     subscribe: 'Đăng ký', subscribed: 'Cảm ơn bạn đã đăng ký!', badEmail: 'Vui lòng nhập email hợp lệ.',
-    fShop: 'Shop', fNew: 'Mới về', fDresses: 'Váy', fWork: 'Công sở', fBeauty: 'Beauty',
+    fShop: 'Shop', fNew: 'Mới về', fDresses: 'Đầm', fWork: 'Công sở', fBeauty: 'Beauty',
     help: 'Hỗ trợ', sizeGuide: 'Hướng dẫn chọn size', shipping: 'Giao hàng', returns: 'Đổi trả', contact: 'Liên hệ',
     tagline: 'Thời trang đẹp – Phong cách chất – Tự tin tỏa sáng',
     home: 'Trang chủ', dresses: 'Đầm',
@@ -187,7 +188,7 @@ const I18N = {
     newsTitle: 'Get new arrivals and Live dates',
     newsBody: 'Exclusive offers for our regulars, straight to your inbox.',
     subscribe: 'Subscribe', subscribed: 'Thanks for subscribing!', badEmail: 'Please enter a valid email.',
-    fShop: 'Shop', fNew: 'New arrivals', fDresses: 'Dresses & skirts', fWork: 'Workwear', fBeauty: 'Beauty',
+    fShop: 'Shop', fNew: 'New arrivals', fDresses: 'Dresses', fWork: 'Workwear', fBeauty: 'Beauty',
     help: 'Help', sizeGuide: 'Size guide', shipping: 'Shipping', returns: 'Returns', contact: 'Contact',
     tagline: 'Simple · Elegant · Effortless',
     home: 'Home', dresses: 'Dresses',
@@ -213,7 +214,8 @@ const HOME_TILES = [
   { vi: 'Áo', en: 'Tops', img: null, bg: '#f4e4de', href: 'shop.html?cat=ao' },
   { vi: 'Quần', en: 'Pants', img: null, bg: '#ecdcd3', href: 'shop.html?cat=quan' },
   { vi: 'Set', en: 'Sets', img: null, bg: '#f1ddd5', href: 'shop.html?cat=set' },
-  { vi: 'Váy', en: 'Dresses & skirts', img: 'images/dam-co-be-khoa-keo-2.webp', bg: '#ecdcd3', href: 'shop.html?cat=vay' }
+  { vi: 'Váy', en: 'Skirts', img: null, bg: '#e9d2cb', href: 'shop.html?cat=vay' },
+  { vi: 'Đầm', en: 'Dresses', img: 'images/dam-co-be-khoa-keo-2.webp', bg: '#ecdcd3', href: 'shop.html?cat=dam' }
 ];
 
 // ---------- helpers ----------
