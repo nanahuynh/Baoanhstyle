@@ -89,7 +89,8 @@ function render() {
   $('p-price').textContent = priceText(product);
   $('p-price').classList.toggle('sale', !!product.sale);
   $('p-old').textContent = oldPriceText(product);
-  $('main-badge').textContent = product.badge;
+  $('main-badge').textContent = badgeOf(product);
+  $('main-badge').hidden = !badgeOf(product);
   $('main-badge').classList.toggle('sale', !!product.sale);
 
   const isVideo = cur.type === 'video';

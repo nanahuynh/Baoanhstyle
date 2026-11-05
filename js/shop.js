@@ -7,6 +7,7 @@ const list = key => (params.get(key) || '').split(',').filter(Boolean);
 const f = {
   cat: params.get('cat') || '',
   sale: params.get('sale') === '1',
+  fresh: params.get('new') === '1',
   size: new Set(list('size')),
   color: new Set(list('color')),
   price: new Set(list('price')),
@@ -20,6 +21,7 @@ const ALL_COLORS = [...new Set(PRODUCTS.flatMap(p => p.dots))];
 function matches(p, skip) {
   if (f.cat && p.category !== f.cat) return false;
   if (f.sale && !p.sale) return false;
+  if (f.fresh && !isNew(p)) return false;
   if (skip !== 'size' && f.size.size && !p.sizes.some(s => f.size.has(s))) return false;
   if (skip !== 'color' && f.color.size && !p.dots.some(c => f.color.has(colorName(c)) || f.color.has(c))) return false;
   if (skip !== 'occasion' && f.occasion.size && !p.occasions.some(o => f.occasion.has(o))) return false;
@@ -39,7 +41,7 @@ function sorted(items) {
     return dir * (x - y);
   };
   const out = items.slice();
-  if (f.sort === 'new') out.sort((a, b) => (b.badge === 'NEW') - (a.badge === 'NEW'));
+  if (f.sort === 'new' || f.fresh) out.sort(newestFirst);
   if (f.sort === 'price-asc') out.sort(byPrice(1));
   if (f.sort === 'price-desc') out.sort(byPrice(-1));
   return out;
@@ -49,6 +51,7 @@ function syncUrl() {
   const q = new URLSearchParams();
   if (f.cat) q.set('cat', f.cat);
   if (f.sale) q.set('sale', '1');
+  if (f.fresh) q.set('new', '1');
   ['size', 'color', 'price', 'occasion'].forEach(k => { if (f[k].size) q.set(k, [...f[k]].join(',')); });
   if (f.sort !== 'featured') q.set('sort', f.sort);
   history.replaceState(null, '', 'shop.html' + (q.toString() ? '?' + q : ''));
@@ -68,12 +71,13 @@ function chip(group, value, label, extra = '') {
 function render() {
   // category tabs
   const tabs = [{ id: '', vi: 'Tất cả', en: 'All' }, ...CATEGORY_LIST];
-  $('cat-tabs').innerHTML = tabs.map(c => `<button type="button" role="tab" data-cat="${c.id}" aria-selected="${f.cat === c.id}">${c[state.lang]}</button>`).join('')
+  $('cat-tabs').innerHTML = tabs.map(c => `<button type="button" role="tab" data-cat="${c.id}" aria-selected="${f.cat === c.id && !f.sale && !f.fresh}">${c[state.lang]}</button>`).join('')
+    + `<button type="button" role="tab" data-new="1" aria-selected="${f.fresh}">${tr('Mới về', 'New')}</button>`
     + `<button type="button" role="tab" data-sale="1" aria-selected="${f.sale}" class="sale">Sale</button>`;
 
-  const title = f.sale ? 'Sale' : f.cat ? categoryName(f.cat) : tr('Tất cả sản phẩm', 'All pieces');
+  const title = f.sale ? 'Sale' : f.fresh ? tr('Mới về', 'New arrivals') : f.cat ? categoryName(f.cat) : tr('Tất cả sản phẩm', 'All pieces');
   $('shop-title').textContent = title;
-  $('crumb-cat').textContent = f.cat || f.sale ? ' / ' + title : '';
+  $('crumb-cat').textContent = f.cat || f.sale || f.fresh ? ' / ' + title : '';
   document.title = `${title} — Style by BaoAnh`;
 
   // filters (colour values are the localised names so Be/Beige stay one chip)
@@ -86,6 +90,10 @@ function render() {
   const items = sorted(PRODUCTS.filter(p => matches(p)));
   $('shop-grid').innerHTML = items.map(productCard).join('');
   $('shop-empty').hidden = items.length > 0;
+  $('shop-empty').querySelector('p').textContent = f.sale
+    ? tr('Hiện chưa có sản phẩm nào đang sale. Quay lại sau nhé!', 'Nothing is on sale right now. Check back soon!')
+    : f.fresh ? tr('Chưa có hàng mới trong 2 tháng gần đây.', 'No new arrivals in the last 2 months.')
+    : tr('Không có sản phẩm phù hợp với bộ lọc.', 'No pieces match these filters.');
   $('shop-count').textContent = tr(`${items.length} sản phẩm`, `${items.length} ${items.length === 1 ? 'piece' : 'pieces'}`);
   $('show-results').textContent = tr(`Xem ${items.length} sản phẩm`, `Show ${items.length} results`);
 
@@ -120,8 +128,9 @@ document.addEventListener('click', e => {
   if (r) { f[r.dataset.remove].delete(r.dataset.value); return render(); }
   const tab = e.target.closest('#cat-tabs [role=tab]');
   if (tab) {
-    if (tab.dataset.sale) { f.sale = !f.sale; f.cat = ''; }
-    else { f.cat = tab.dataset.cat; f.sale = false; }
+    if (tab.dataset.sale) { f.sale = !f.sale; f.fresh = false; f.cat = ''; }
+    else if (tab.dataset.new) { f.fresh = !f.fresh; f.sale = false; f.cat = ''; }
+    else { f.cat = tab.dataset.cat; f.sale = false; f.fresh = false; }
     return render();
   }
   if (e.target.closest('#clear-filters, #clear-filters-2')) return clearFilters();

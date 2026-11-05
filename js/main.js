@@ -20,13 +20,14 @@ const OCCASIONS = [
 
 // Sản phẩm.
 // price: giá bán (số, USD), vd 48. null = chưa có giá, hiện [Giá].
-// oldPrice: giá gốc khi sale. video: link file .mp4 (vd 'videos/dam-a.mp4') hoặc null.
+// added: ngày đưa lên web (YYYY-MM-DD). Trong 2 tháng đầu tự có nhãn NEW và nằm trong "Mới về".
+// sale: true = đang sale (nhãn SALE, nằm trong mục Sale). oldPrice: giá gốc khi sale. video: link file .mp4 (vd 'videos/dam-a.mp4') hoặc null.
 // details: mô tả / chất liệu / form / bảo quản — thay chữ trong [ ] bằng thông tin thật.
 // gallery: nhiều ảnh cho 1 sản phẩm (ảnh đầu là ảnh đại diện). Không có thì dùng ảnh theo màu.
 // sizeChart: bảng size riêng của mẫu (cm). Không có thì dùng SIZE_CHART chung bên dưới.
 const PRODUCTS = [
   {
-    id: 'e', vi: 'Đầm cổ bẻ khóa kéo', en: 'Collared zip-front mini dress', badge: 'NEW',
+    id: 'e', vi: 'Đầm cổ bẻ khóa kéo', en: 'Collared zip-front mini dress', added: '2026-10-03',
     category: 'dam', occasions: ['cong-so', 'tiec'], sizes: ['S', 'M', 'L'],
     img: 'images/dam-co-be-khoa-keo-1.webp', bg: '#ecdcd3', dots: ['#2f2a28'], price: 58, video: null,
     gallery: [
@@ -139,7 +140,7 @@ const I18N = {
     heroBody: 'Thời trang thanh lịch cho người phụ nữ hiện đại: form tôn dáng, chất liệu dễ chịu, mặc đẹp từ công sở đến dạo phố.',
     shopNow: 'Mua ngay', watchLive: 'Xem Live',
     catEyebrow: 'Shop by category', catTitle: 'Chọn phong cách của bạn',
-    newTitle: 'Hàng mới về tuần này', viewAll: 'Xem tất cả',
+    newTitle: 'Hàng mới về', viewAll: 'Xem tất cả',
     liveTitle: 'Mua sắm cùng BaoAnh trên Live',
     liveBody: 'Xem thử đồ trên người thật, hỏi size trực tiếp và nhận ưu đãi chỉ có trong buổi Live.',
     liveSchedule: '[Lịch Live]', remind: 'Nhắc tôi',
@@ -176,7 +177,7 @@ const I18N = {
     heroBody: 'Elegant fashion for the modern woman: flattering fits and comfortable fabrics, from the office to the weekend.',
     shopNow: 'Shop now', watchLive: 'Watch Live',
     catEyebrow: 'Shop by category', catTitle: 'Find your style',
-    newTitle: 'New this week', viewAll: 'View all',
+    newTitle: 'New arrivals', viewAll: 'View all',
     liveTitle: 'Shop live with BaoAnh',
     liveBody: 'See every piece on a real woman, ask about sizing in real time, and get live-only offers.',
     liveSchedule: '[Live schedule]', remind: 'Remind me',
@@ -341,6 +342,15 @@ const HEART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 function t(key) { return I18N[state.lang][key] ?? key; }
 
 // ---------- shared renderers ----------
+// NEW for 2 months after the date it was added; SALE when tagged sale (sale wins)
+const NEW_FOR_DAYS = 60;
+function isNew(p) {
+  const d = p.added ? new Date(p.added + 'T00:00:00') : null;
+  return !!d && !isNaN(d) && (Date.now() - d) / 864e5 < NEW_FOR_DAYS;
+}
+function badgeOf(p) { return p.sale ? 'SALE' : isNew(p) ? 'NEW' : ''; }
+function newestFirst(a, b) { return String(b.added || '').localeCompare(String(a.added || '')); }
+
 function productCard(p) {
   const fav = !!state.favs[p.id];
   const other = state.lang === 'vi' ? 'en' : 'vi';
@@ -348,7 +358,7 @@ function productCard(p) {
     <article class="card">
       <div class="card-media" style="background:${p.bg}">
         <a href="product.html?id=${p.id}"><img src="${p.img}" alt="${escHtml(p[state.lang])}" loading="lazy"></a>
-        <span class="badge${p.sale ? ' sale' : ''}">${p.badge}</span>
+        ${badgeOf(p) ? `<span class="badge${p.sale ? ' sale' : ''}">${badgeOf(p)}</span>` : ''}
         <button class="fav" data-id="${p.id}" aria-pressed="${fav}" aria-label="${tr('Yêu thích', 'Save')}">${HEART}</button>
       </div>
       <div class="card-body">
@@ -377,7 +387,10 @@ function renderHomeTiles() {
 function renderHomeProducts() {
   const el = document.getElementById('product-grid');
   if (!el) return;
-  el.innerHTML = PRODUCTS.slice(0, 4).map(productCard).join('');
+  const fresh = PRODUCTS.filter(isNew).sort(newestFirst);
+  const sec = el.closest('section');
+  if (sec) sec.hidden = !fresh.length;
+  el.innerHTML = fresh.slice(0, 4).map(productCard).join('');
 }
 
 function taxLabel(tt) { return `${tr('Thuế', 'Tax')} ${tt.taxState} (${+(tt.taxRate * 100).toFixed(3)}%)`; }
