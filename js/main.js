@@ -46,44 +46,6 @@ const PRODUCTS = [
       fit: 'Eo chiết ôm, chân váy xòe chữ A, dài trên gối. [Mẫu cao … mặc size …]',
       care: '[Bảo quản: giặt tay / máy, nhiệt độ ủi]'
     }
-  },
-  {
-    id: 'a', vi: 'Đầm cape vai đính cài', en: 'Cape-sleeve midi dress', badge: 'NEW',
-    category: 'dam', occasions: ['tiec', 'cong-so'], sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    img: 'images/dam-cape-vai.jpg', bg: '#f1ddd5', dots: ['#efe3cf', '#2f2a28'], price: 60, video: null,
-    details: {
-      description: '[Mô tả: kiểu dáng, điểm nhấn, dịp mặc]',
-      material: '[Chất liệu: thành phần vải, độ co giãn]',
-      fit: '[Form: ôm / suông, dài bao nhiêu, mẫu cao … mặc size …]',
-      care: '[Bảo quản: giặt tay / máy, nhiệt độ ủi]'
-    }
-  },
-  {
-    id: 'b', vi: 'Đầm đen nhún eo đính cài', en: 'Black ruched midi dress', badge: 'SALE',
-    category: 'dam', occasions: ['cong-so', 'tiec'], sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    img: 'images/dam-den-nhun-eo.jpg', bg: '#ecdcd3', dots: ['#2f2a28', '#efe3cf'], price: 60, oldPrice: null, sale: true, video: null,
-    details: {
-      description: '[Mô tả: kiểu dáng, điểm nhấn, dịp mặc]',
-      material: '[Chất liệu]', fit: '[Form]', care: '[Bảo quản]'
-    }
-  },
-  {
-    id: 'c', vi: 'Set áo lụa đính hoa & chân váy sequin', en: 'Rose blouse & sequin skirt set', badge: 'LIVE',
-    category: 'ao-set', occasions: ['tiec'], sizes: ['S', 'M', 'L', 'XL'],
-    img: 'images/set-ao-lua-sequin.jpg', bg: '#f4e4de', dots: ['#f7f2e8'], price: 60, video: null,
-    details: {
-      description: '[Mô tả: kiểu dáng, điểm nhấn, dịp mặc]',
-      material: '[Chất liệu]', fit: '[Form]', care: '[Bảo quản]'
-    }
-  },
-  {
-    id: 'd', vi: 'Đầm suông dây rút eo', en: 'Sleeveless drawstring dress', badge: 'NEW',
-    category: 'dam', occasions: ['dao-pho'], sizes: ['S', 'M', 'L', 'XL'],
-    img: 'images/dam-suong-day-rut.jpg', bg: '#e9d2cb', dots: ['#f3ede2'], price: null, video: null,
-    details: {
-      description: '[Mô tả: kiểu dáng, điểm nhấn, dịp mặc]',
-      material: '[Chất liệu]', fit: '[Form]', care: '[Bảo quản]'
-    }
   }
 ];
 
@@ -94,9 +56,8 @@ const COLOR_NAMES = {
   '#f3ede2': { vi: 'Trắng ngà', en: 'Ivory' }
 };
 // Ảnh theo từng màu. Thêm ảnh ở đây khi có.
+// Ví dụ:  e: { '#2f2a28': 'images/dam-co-be-khoa-keo-1.webp' },
 const COLOR_IMAGES = {
-  a: { '#efe3cf': 'images/dam-cape-vai.jpg', '#2f2a28': 'images/dam-den-nhun-eo.jpg' },
-  b: { '#2f2a28': 'images/dam-den-nhun-eo.jpg', '#efe3cf': 'images/dam-cape-vai.jpg' }
 };
 
 // Khoảng giá cho bộ lọc Price (USD)
@@ -246,10 +207,8 @@ const I18N = {
 
 // Home page tiles → shop filters
 const HOME_TILES = [
-  { vi: 'Dự tiệc', en: 'Occasion', img: 'images/dam-cape-vai.jpg', bg: '#f1ddd5', href: 'shop.html?occasion=tiec' },
-  { vi: 'Công sở', en: 'Workwear', img: 'images/dam-den-nhun-eo.jpg', bg: '#ecdcd3', href: 'shop.html?occasion=cong-so' },
-  { vi: 'Áo & Set', en: 'Tops & sets', img: 'images/set-ao-lua-sequin.jpg', bg: '#f4e4de', href: 'shop.html?cat=ao-set' },
-  { vi: 'Dạo phố', en: 'Casual', img: 'images/dam-suong-day-rut.jpg', bg: '#e9d2cb', href: 'shop.html?occasion=dao-pho' }
+  { vi: 'Dự tiệc', en: 'Occasion', img: 'images/dam-co-be-khoa-keo-3.webp', bg: '#ecdcd3', href: 'shop.html?occasion=tiec' },
+  { vi: 'Công sở', en: 'Workwear', img: 'images/dam-co-be-khoa-keo-2.webp', bg: '#ecdcd3', href: 'shop.html?occasion=cong-so' }
 ];
 
 // ---------- helpers ----------
@@ -400,6 +359,8 @@ function productCard(p) {
 function renderHomeTiles() {
   const el = document.getElementById('cat-grid');
   if (!el) return;
+  // fewer than 4 tiles: keep the usual tile size and centre them
+  if (HOME_TILES.length < 4) { el.style.gridTemplateColumns = `repeat(${HOME_TILES.length}, minmax(0, 260px))`; el.style.justifyContent = 'center'; }
   el.innerHTML = HOME_TILES.map(c => `
     <a class="cat" href="${c.href}">
       <img src="${c.img}" alt="${c[state.lang]}" style="background:${c.bg}" loading="lazy">
