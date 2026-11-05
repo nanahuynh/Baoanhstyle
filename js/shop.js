@@ -1,4 +1,4 @@
-// SHOP → CATEGORY → FILTER (Size / Color / Price / Occasion)
+// SHOP → CATEGORY → FILTER (Size / Color / Price)
 
 const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -11,7 +11,6 @@ const f = {
   size: new Set(list('size')),
   color: new Set(list('color')),
   price: new Set(list('price')),
-  occasion: new Set(list('occasion')),
   sort: params.get('sort') || 'featured'
 };
 
@@ -24,7 +23,6 @@ function matches(p, skip) {
   if (f.fresh && !isNew(p)) return false;
   if (skip !== 'size' && f.size.size && !p.sizes.some(s => f.size.has(s))) return false;
   if (skip !== 'color' && f.color.size && !p.dots.some(c => f.color.has(colorName(c)) || f.color.has(c))) return false;
-  if (skip !== 'occasion' && f.occasion.size && !p.occasions.some(o => f.occasion.has(o))) return false;
   if (skip !== 'price' && f.price.size) {
     if (typeof p.price !== 'number') return false;
     if (!PRICE_RANGES.some(r => f.price.has(r.id) && p.price >= r.min && p.price < r.max)) return false;
@@ -52,7 +50,7 @@ function syncUrl() {
   if (f.cat) q.set('cat', f.cat);
   if (f.sale) q.set('sale', '1');
   if (f.fresh) q.set('new', '1');
-  ['size', 'color', 'price', 'occasion'].forEach(k => { if (f[k].size) q.set(k, [...f[k]].join(',')); });
+  ['size', 'color', 'price'].forEach(k => { if (f[k].size) q.set(k, [...f[k]].join(',')); });
   if (f.sort !== 'featured') q.set('sort', f.sort);
   history.replaceState(null, '', 'shop.html' + (q.toString() ? '?' + q : ''));
 }
@@ -62,7 +60,6 @@ function chip(group, value, label, extra = '') {
   const count = PRODUCTS.filter(p => matches(p, group) && (
     group === 'size' ? p.sizes.includes(value)
     : group === 'color' ? p.dots.some(c => colorName(c) === value || c === value)
-    : group === 'occasion' ? p.occasions.includes(value)
     : typeof p.price === 'number' && PRICE_RANGES.some(r => r.id === value && p.price >= r.min && p.price < r.max)
   )).length;
   return `<button type="button" class="chip" data-group="${group}" data-value="${escHtml(value)}" aria-pressed="${on}"${!count && !on ? ' data-empty="true"' : ''}>${extra}${escHtml(label)}<span class="chip-n">${count}</span></button>`;
@@ -85,7 +82,6 @@ function render() {
   const colorNames = [...new Map(ALL_COLORS.map(c => [colorName(c), c])).entries()];
   $('f-color').innerHTML = colorNames.map(([name, hex]) => chip('color', name, name, `<span class="swatch-dot" style="background:${hex}"></span>`)).join('');
   $('f-price').innerHTML = PRICE_RANGES.map(r => chip('price', r.id, r[state.lang])).join('');
-  $('f-occasion').innerHTML = OCCASIONS.map(o => chip('occasion', o.id, o[state.lang])).join('');
 
   const items = sorted(PRODUCTS.filter(p => matches(p)));
   $('shop-grid').innerHTML = items.map(productCard).join('');
@@ -101,7 +97,6 @@ function render() {
   f.size.forEach(v => active.push(['size', v, v]));
   f.color.forEach(v => active.push(['color', v, v]));
   f.price.forEach(v => { const r = PRICE_RANGES.find(x => x.id === v); active.push(['price', v, r ? r[state.lang] : v]); });
-  f.occasion.forEach(v => { const o = OCCASIONS.find(x => x.id === v); active.push(['occasion', v, o ? o[state.lang] : v]); });
   $('active-filters').innerHTML = active.map(([g, v, label]) =>
     `<button type="button" class="active-chip" data-remove="${g}" data-value="${escHtml(v)}" aria-label="${tr('Bỏ lọc', 'Remove')} ${escHtml(label)}">${escHtml(label)} ×</button>`).join('');
   $('filter-count').textContent = active.length ? `(${active.length})` : '';
@@ -113,7 +108,7 @@ function render() {
 }
 
 function clearFilters() {
-  ['size', 'color', 'price', 'occasion'].forEach(k => f[k].clear());
+  ['size', 'color', 'price'].forEach(k => f[k].clear());
   render();
 }
 

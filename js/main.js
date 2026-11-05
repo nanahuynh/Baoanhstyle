@@ -4,18 +4,13 @@
 // SHOP SETTINGS — sửa thông tin shop ở phần này
 // ======================================================================
 
-// Danh mục (CATEGORY) và dịp mặc (Occasion filter)
+// Danh mục (CATEGORY)
 const CATEGORY_LIST = [
   { id: 'ao', vi: 'Áo', en: 'Tops' },
   { id: 'quan', vi: 'Quần', en: 'Pants' },
   { id: 'set', vi: 'Set', en: 'Sets' },
   { id: 'vay', vi: 'Váy', en: 'Skirts' },
   { id: 'dam', vi: 'Đầm', en: 'Dresses' }
-];
-const OCCASIONS = [
-  { id: 'tiec', vi: 'Dự tiệc', en: 'Occasion' },
-  { id: 'cong-so', vi: 'Công sở', en: 'Workwear' },
-  { id: 'dao-pho', vi: 'Dạo phố', en: 'Casual' }
 ];
 
 // Sản phẩm.
@@ -28,7 +23,7 @@ const OCCASIONS = [
 const PRODUCTS = [
   {
     id: 'e', vi: 'Đầm cổ bẻ khóa kéo', en: 'Collared zip-front mini dress', added: '2026-10-03',
-    category: 'dam', occasions: ['cong-so', 'tiec'], sizes: ['S', 'M', 'L'],
+    category: 'dam', sizes: ['S', 'M', 'L'],
     img: 'images/dam-co-be-khoa-keo-1.webp', bg: '#ecdcd3', dots: ['#2f2a28'], price: 58, video: null,
     gallery: [
       'images/dam-co-be-khoa-keo-1.webp',
