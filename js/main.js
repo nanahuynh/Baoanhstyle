@@ -6,8 +6,10 @@
 
 // Danh mục (CATEGORY) và dịp mặc (Occasion filter)
 const CATEGORY_LIST = [
-  { id: 'dam', vi: 'Đầm', en: 'Dresses' },
-  { id: 'ao-set', vi: 'Áo & Set', en: 'Tops & sets' }
+  { id: 'ao', vi: 'Áo', en: 'Tops' },
+  { id: 'quan', vi: 'Quần', en: 'Pants' },
+  { id: 'set', vi: 'Set', en: 'Sets' },
+  { id: 'vay', vi: 'Váy', en: 'Dresses & skirts' }
 ];
 const OCCASIONS = [
   { id: 'tiec', vi: 'Dự tiệc', en: 'Occasion' },
@@ -24,7 +26,7 @@ const OCCASIONS = [
 const PRODUCTS = [
   {
     id: 'e', vi: 'Đầm cổ bẻ khóa kéo', en: 'Collared zip-front mini dress', badge: 'NEW',
-    category: 'dam', occasions: ['cong-so', 'tiec'], sizes: ['S', 'M', 'L'],
+    category: 'vay', occasions: ['cong-so', 'tiec'], sizes: ['S', 'M', 'L'],
     img: 'images/dam-co-be-khoa-keo-1.webp', bg: '#ecdcd3', dots: ['#2f2a28'], price: 58, video: null,
     gallery: [
       'images/dam-co-be-khoa-keo-1.webp',
@@ -148,7 +150,7 @@ const I18N = {
     newsTitle: 'Nhận tin hàng mới và lịch Live',
     newsBody: 'Ưu đãi riêng cho khách thân thiết, gửi thẳng vào hộp thư của bạn.',
     subscribe: 'Đăng ký', subscribed: 'Cảm ơn bạn đã đăng ký!', badEmail: 'Vui lòng nhập email hợp lệ.',
-    fShop: 'Shop', fNew: 'Mới về', fDresses: 'Đầm', fWork: 'Công sở', fBeauty: 'Beauty',
+    fShop: 'Shop', fNew: 'Mới về', fDresses: 'Váy', fWork: 'Công sở', fBeauty: 'Beauty',
     help: 'Hỗ trợ', sizeGuide: 'Hướng dẫn chọn size', shipping: 'Giao hàng', returns: 'Đổi trả', contact: 'Liên hệ',
     tagline: 'Thời trang đẹp – Phong cách chất – Tự tin tỏa sáng',
     home: 'Trang chủ', dresses: 'Đầm',
@@ -185,7 +187,7 @@ const I18N = {
     newsTitle: 'Get new arrivals and Live dates',
     newsBody: 'Exclusive offers for our regulars, straight to your inbox.',
     subscribe: 'Subscribe', subscribed: 'Thanks for subscribing!', badEmail: 'Please enter a valid email.',
-    fShop: 'Shop', fNew: 'New arrivals', fDresses: 'Dresses', fWork: 'Workwear', fBeauty: 'Beauty',
+    fShop: 'Shop', fNew: 'New arrivals', fDresses: 'Dresses & skirts', fWork: 'Workwear', fBeauty: 'Beauty',
     help: 'Help', sizeGuide: 'Size guide', shipping: 'Shipping', returns: 'Returns', contact: 'Contact',
     tagline: 'Simple · Elegant · Effortless',
     home: 'Home', dresses: 'Dresses',
@@ -206,9 +208,12 @@ const I18N = {
 };
 
 // Home page tiles → shop filters
+// Ô danh mục ở trang chủ (Shop by category). img: null = chưa có ảnh, hiện ô màu chờ.
 const HOME_TILES = [
-  { vi: 'Dự tiệc', en: 'Occasion', img: 'images/dam-co-be-khoa-keo-3.webp', bg: '#ecdcd3', href: 'shop.html?occasion=tiec' },
-  { vi: 'Công sở', en: 'Workwear', img: 'images/dam-co-be-khoa-keo-2.webp', bg: '#ecdcd3', href: 'shop.html?occasion=cong-so' }
+  { vi: 'Áo', en: 'Tops', img: null, bg: '#f4e4de', href: 'shop.html?cat=ao' },
+  { vi: 'Quần', en: 'Pants', img: null, bg: '#ecdcd3', href: 'shop.html?cat=quan' },
+  { vi: 'Set', en: 'Sets', img: null, bg: '#f1ddd5', href: 'shop.html?cat=set' },
+  { vi: 'Váy', en: 'Dresses & skirts', img: 'images/dam-co-be-khoa-keo-2.webp', bg: '#ecdcd3', href: 'shop.html?cat=vay' }
 ];
 
 // ---------- helpers ----------
@@ -359,12 +364,11 @@ function productCard(p) {
 function renderHomeTiles() {
   const el = document.getElementById('cat-grid');
   if (!el) return;
-  // fewer than 4 tiles: keep the usual tile size and centre them
-  if (HOME_TILES.length < 4) { el.style.gridTemplateColumns = `repeat(${HOME_TILES.length}, minmax(0, 260px))`; el.style.justifyContent = 'center'; }
   el.innerHTML = HOME_TILES.map(c => `
     <a class="cat" href="${c.href}">
-      <img src="${c.img}" alt="${c[state.lang]}" style="background:${c.bg}" loading="lazy">
-      <span>${c[state.lang]}</span>
+      ${c.img ? `<img src="${c.img}" alt="${c[state.lang]}" style="background:${c.bg}" loading="lazy">`
+        : `<span class="cat-ph" style="background:${c.bg}">${tr('Sắp có hàng', 'Coming soon')}</span>`}
+      <span class="cat-name">${c[state.lang]}</span>
     </a>`).join('');
 }
 
